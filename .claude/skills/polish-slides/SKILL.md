@@ -1,0 +1,48 @@
+---
+name: polish-slides
+description: Polish a PowerPoint deck so it looks finished and consistent, especially one built on a corporate template such as the WU template. Use this whenever the user asks to polish, clean up, tidy, fix the layout of, or QA a .pptx or slide deck, or says slides look cramped, overflow, are inconsistent, or "not appealing", and also right after you generate or edit any deck, before presenting it to the user. Covers rendering the deck to images, finding overflow and leftover template text, fixing layout and typography inside the template's placeholders, and validating the file.
+---
+
+# Polish slides
+
+A deck is polished when it looks like one person designed it, nothing overflows, nothing is left over from the template, and every slide earns its place. The way to get there is to look at the rendered slides, fix what you see, and look again. Reading the XML alone misses most problems, because overflow, odd wrapping and empty space only show up when rendered.
+
+Use the `pptx` skill for the mechanics of editing OOXML (unzip, edit slide XML, zip, validate). This skill is the quality pass on top of it.
+
+## Workflow
+
+1. **Render and measure.** Run `python scripts/check_deck.py deck.pptx <outdir>` (path relative to this skill). It converts the deck to PDF, writes contact sheets (`sheet-N.jpg`, six slides each) and per-slide PNGs, and lists likely problems: text running off the slide, fonts below 10.5 pt, leftover placeholder text, nearly empty slides. Treat the list as hints; the images are the ground truth.
+2. **Look at every sheet.** Check the items under "What to look for". Note each fix as a short list before editing, so you change things deliberately instead of nudging at random.
+3. **Fix inside the template.** Work through the template's placeholders and layouts (see "Templates"). Re-render after the fixes and look again; the first fix often shifts something else.
+4. **Validate the file.** Run the `pptx` skill's `validate.py` with `--original <template>` for template-derived decks. A deck that renders fine can still be refused by PowerPoint.
+5. **Report honestly.** Say what you changed, what you could not check (fonts that were substituted in the preview, content you did not verify), and anything that needs a human decision.
+
+## What to look for
+
+- **Overflow and cut-off text.** Fix by cutting words first, then splitting the slide, and shrinking the font last. A slide that needs 10 pt text has too much on it.
+- **Title wrapping to two lines** where the layout expects one: shorten the title rather than shrinking it. A two-line title is acceptable only if the layout has room for it.
+- **Big empty areas.** A bullet list that fills the top third of a slide looks unfinished. Prefer a two-column layout, a table, a picture, or a larger body size (14 to 16 pt) before adding filler. Leave space where it helps reading; fix space that looks accidental.
+- **Wrapped numbers and units.** Use a non-breaking space (U+00A0) between a number and its unit or percent sign ("20 %", "15 min") so it never splits across lines.
+- **Inconsistent patterns.** Same kind of content, same layout: all section dividers alike, all two-column slides built the same way, bullet depth no deeper than two levels. Vary layouts across *different* kinds of content, not randomly.
+- **Leftover template content.** Sample text, "Sample Footer", slide numbers or footers that still describe the template, unused placeholders showing prompt text, stray pictures. Delete the whole unused shape, not just its text, or it keeps its frame and prompt.
+- **Weak slides.** Text-only slides with a long paragraph are the usual culprit. Turn paragraphs into 3 to 5 short bullets with a bold lead-in ("**Positioning:** ...") or move them to speaker notes. Add a picture or logo when the source material provides one that fits.
+- **Links and contact details.** Check each hyperlink is attached to the intended text and points to the right target; mailto links for e-mail addresses.
+- **Language and spelling.** One language and one spelling variant (for example British English) throughout, with the language tag set accordingly so spell-check does not underline everything.
+
+## Templates
+
+Corporate templates (WU, university or company masters) define fonts, colours, logo, footer and slide numbers on the master and layouts. Respect them; this is what makes the deck look official.
+
+- Fill the layout's own placeholders (title, content, the two headings of a comparison layout). Avoid free text boxes, which ignore the template's fonts and spacing.
+- Do not edit the master or layouts to make one slide fit. Change the content or pick a different layout. If the template says not to touch the footer on the master (the WU one does), set footer text per slide.
+- Choose layouts by purpose: title, section divider (short text only), content, two content, comparison (two headed columns), title-only for tables and charts, closing/contact.
+- Copy a template slide for each new slide instead of building shapes by hand; finish all adding, deleting and reordering before filling in text, because copies clone whatever is on the source slide.
+- Keep the template's typography. For WU that means Georgia titles and Verdana body, with 16 pt running text as the default; go down to 14 pt for dense two-column slides and do not go below 12 pt for body text.
+
+## Fonts and the preview
+
+The preview is rendered by LibreOffice, which substitutes fonts it does not have (Georgia and Verdana among them). Substitutes are often wider, so a slide that fits in the preview will usually fit in PowerPoint, but exact line breaks differ. Say so when you hand over the deck, and leave a little slack in tight boxes instead of fitting them to the pixel.
+
+## Hand-over
+
+Save the `.pptx` and a PDF export together. If the user cannot open a preview inline, they can download the files; avoid spaces in file names when a preview fails. When the deck goes to the repository, commit both files and mention what was not verified.
