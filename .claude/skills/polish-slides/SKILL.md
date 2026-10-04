@@ -13,7 +13,7 @@ Use the `pptx` skill for the mechanics of editing OOXML (unzip, edit slide XML, 
 
 1. **Render and measure.** Run `python scripts/check_deck.py deck.pptx <outdir>` (path relative to this skill). It converts the deck to PDF, writes contact sheets (`sheet-N.jpg`, six slides each) and per-slide PNGs, and lists likely problems: text running off the slide, fonts below 10.5 pt, leftover placeholder text, nearly empty slides. Treat the list as hints; the images are the ground truth.
 2. **Look at every sheet.** Check the items under "What to look for". Note each fix as a short list before editing, so you change things deliberately instead of nudging at random.
-3. **Fix inside the template.** Work through the template's placeholders and layouts (see "Templates"). Re-render after the fixes and look again; the first fix often shifts something else.
+3. **Fix inside the template.** Work through the template's placeholders and layouts (see "Templates"); if a slide uses free text boxes or the wrong layout, move its content into the right layout from `WT26-27/template.pptx`. Re-render after the fixes and look again; the first fix often shifts something else.
 4. **Validate the file.** Run the `pptx` skill's `validate.py` with `--original <template>` for template-derived decks. A deck that renders fine can still be refused by PowerPoint.
 5. **Report honestly.** Say what you changed, what you could not check (fonts that were substituted in the preview, content you did not verify), and anything that needs a human decision.
 
@@ -33,10 +33,24 @@ Use the `pptx` skill for the mechanics of editing OOXML (unzip, edit slide XML, 
 
 Corporate templates (WU, university or company masters) define fonts, colours, logo, footer and slide numbers on the master and layouts. Respect them; this is what makes the deck look official.
 
-- Fill the layout's own placeholders (title, content, the two headings of a comparison layout). Avoid free text boxes, which ignore the template's fonts and spacing.
-- Do not edit the master or layouts to make one slide fit. Change the content or pick a different layout. If the template says not to touch the footer on the master (the WU one does), set footer text per slide.
-- Choose layouts by purpose: title, section divider (short text only), content, two content, comparison (two headed columns), title-only for tables and charts, closing/contact.
-- Copy a template slide for each new slide instead of building shapes by hand; finish all adding, deleting and reordering before filling in text, because copies clone whatever is on the source slide.
+**Default template.** For WU decks, start from `WT26-27/template.pptx` in this repository (`template.potx` is the same master without sample slides). Open its sample slides to see what each layout looks like, copy the one you need, and fill in its placeholders. Layout names are German because the template's are.
+
+| Purpose | Layout |
+|---|---|
+| Title slide | Titelfolie, or Titelfolie Kontakt when the slide shows name, e-mail and a link (office hours); the "kurz" variants suit one-line titles |
+| Section divider (short text only) | Kapitelfolie, Kapitelfolie kurz |
+| Bullets | Titel und Inhalt |
+| Two columns | Zwei Inhalte; with a coloured heading over each column: Zwei Inhalte Vergleich |
+| Text with a photo, optionally a logo in the photo's corner (company, product or person introductions) | Inhalt und Bild mit Logo |
+| Table | Titel und Tabelle (insert the table through the placeholder) |
+| Large chart or graphic | Nur Titel |
+| Closing / contact card | Abschlussfolie |
+
+Rules that keep the result consistent:
+
+- Fill the layout's own placeholders (title, content, the two headings of a comparison layout, the picture and logo placeholders). Avoid free text boxes, which ignore the template's fonts and spacing.
+- Do not edit the master or layouts to make one slide fit. Change the content or pick a different layout. If the same need keeps coming back, add a layout to the template once, in both `template.pptx` and `template.potx`, instead of fixing it slide by slide. If the template says not to touch the footer on the master (the WU one does), set footer text per slide.
+- Copy a template slide for each new slide instead of building shapes by hand, and finish all adding, deleting and reordering before filling in text, because copies clone whatever is on the source slide. A copied sample slide can carry its own position or size overrides that mask the layout; clear them (an empty `<p:spPr/>`) when the layout should decide.
 - Keep the template's typography. For WU that means Georgia titles and Verdana body, with 16 pt running text as the default; go down to 14 pt for dense two-column slides and do not go below 12 pt for body text.
 
 ## Fonts and the preview
