@@ -37,14 +37,20 @@ Corporate templates (WU, university or company masters) define fonts, colours, l
 
 | Purpose | Layout |
 |---|---|
-| Title slide | Titelfolie, or Titelfolie Kontakt when the slide shows name, e-mail and a link (office hours); the "kurz" variants suit one-line titles |
+| Title slide | Titelfolie, or Titelfolie Kontakt, whose info box already shows the presenter's name, e-mail and office-hours link; the "kurz" variants suit one-line titles |
 | Section divider (short text only) | Kapitelfolie, Kapitelfolie kurz |
 | Bullets | Titel und Inhalt |
 | Two columns | Zwei Inhalte; with a coloured heading over each column: Zwei Inhalte Vergleich |
 | Text with a photo, optionally a logo in the photo's corner (company, product or person introductions) | Inhalt und Bild mit Logo |
 | Table | Titel und Tabelle (insert the table through the placeholder) |
 | Large chart or graphic | Nur Titel |
-| Closing / contact card | Abschlussfolie |
+| Closing / contact card | Abschlussfolie Kontakt (business card already filled in); plain Abschlussfolie for another person |
+
+**Presenter details.** Titelfolie Kontakt and Abschlussfolie Kontakt carry these as fixed text, so a new deck needs no typing. The layouts hold the text as fixed shapes, not placeholders, because PowerPoint shows placeholder text only as a grey prompt that disappears on new slides.
+
+- Dr Arne Floh, Senior Lecturer in Marketing, WU Vienna, Institute for International Business, Welthandelsplatz 1, 1020 Vienna, Austria
+- E-mail `arne.floh@wu.ac.at`, web `https://www.wu.ac.at/en/welthandel/arne-floh/`, phone labelled "F" +43-31336-6367 (as in the syllabus), office hours via the booking calendar `https://calendar.app.google/o4FuKoF1YcarRfnC8`
+- Use only these details on slides; do not add private numbers or addresses found elsewhere (for example in e-mails). If a detail changes, edit it in both `template.pptx` and `template.potx` (layouts 16 and 19) and update this list.
 
 Rules that keep the result consistent:
 
