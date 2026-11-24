@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Latin America Market Scorecard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; an analyst's worksheet that flows question -> method -> live model -> robustness -> indicators */
+:root{
+ --bg:#f5f6f8;--panel:#ffffff;--ink:#141a22;--ink2:#4a5361;--muted:#6f7886;--line:#dfe3e9;--accent:#1c5cab;--accent-soft:#e7eef8;
+ --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;
+ --q1:#cde2fb;--q3:#86b6ef;--q5:#3987e5;--q7:#1c5cab;--q9:#0d366b;
+ --f-disp:"Fraunces",Georgia,serif;--f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121519;--panel:#1a1e24;--ink:#eef1f5;--ink2:#c0c7d1;--muted:#949daa;--line:#2e343d;--accent:#86b6ef;--accent-soft:#1f2a38;
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#0ca30c;--q1:#1b2a3d;--q3:#184f95;--q5:#2a78d6;--q7:#6da7ec;--q9:#cde2fb;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121519;--panel:#1a1e24;--ink:#eef1f5;--ink2:#c0c7d1;--muted:#949daa;--line:#2e343d;--accent:#86b6ef;--accent-soft:#1f2a38;
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#0ca30c;--q1:#1b2a3d;--q3:#184f95;--q5:#2a78d6;--q7:#6da7ec;--q9:#cde2fb;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 56px;display:grid;gap:28px}
+h1,h2{font-family:var(--f-disp);font-weight:600;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(28px,4.4vw,42px);line-height:1.12}
+h2{font-size:22px}
+p{margin:0;max-width:68ch}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--ink2);font-size:17px}
+.mono,.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+section{display:grid;gap:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px}
+.hero{display:grid;gap:14px}
+.verdict{display:flex;flex-wrap:wrap;gap:10px}
+.chip{display:flex;align-items:baseline;gap:8px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px}
+.chip b{font-family:var(--f-mono);font-weight:500;color:var(--accent)}
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:6px;align-content:start;min-width:0}
+.step .n{font:500 12px var(--f-mono);color:var(--muted)}
+.step h3{margin:0;font-size:15px}
+.step p{font-size:13px;color:var(--ink2)}
+.step code{font:12px var(--f-mono);color:var(--ink);background:var(--accent-soft);padding:1px 4px;border-radius:4px}
+@media (max-width:820px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:460px){.steps{grid-template-columns:1fr}}
+.controls{display:grid;gap:16px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lbl{font:500 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:6px}
+button.seg{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+button.seg[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+button.seg:focus-visible,input:focus-visible,.hm td:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sliders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 20px}
+@media (max-width:700px){.sliders{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sl{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;min-width:0}
+.sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+.sl label{font-size:13px;white-space:nowrap}
+.sl input{width:100%;accent-color:var(--accent);min-width:0}
+.sl .num{font-size:13px;width:3.2em;text-align:right;color:var(--ink2)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.chart{width:100%;overflow-x:auto}
+svg text{fill:var(--ink2);font-family:var(--f-body);font-size:12px}
+svg .country{fill:var(--ink);font-size:13px;font-weight:600}
+svg .val{fill:var(--ink);font-family:var(--f-mono);font-size:12px}
+svg .grid{stroke:var(--line);stroke-width:1}
+.note{font-size:13px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line)}
+th{font:500 11px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+td.num,th.num{text-align:right}
+.rk{display:inline-grid;place-items:center;width:28px;height:24px;border-radius:5px;font:500 12px var(--f-mono)}
+.tw{overflow-x:auto}
+.hm{border-collapse:separate;border-spacing:2px;font-size:12px}
+.hm th,.hm td{border:0;padding:0}
+.hm td.c{width:62px;height:22px;border-radius:3px;text-align:center;font:11px/22px var(--f-mono);cursor:pointer}
+.hm td.id{font:11px var(--f-mono);color:var(--muted);padding-right:6px;white-space:nowrap}
+.hm td.nm{padding-right:10px;max-width:290px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.hm tr.sel td.nm{color:var(--accent);font-weight:600}
+.hm th{font-size:10px;padding-bottom:4px;text-align:center}
+.hm tr.gap td{height:8px}
+.detail{display:grid;gap:10px;align-content:start}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:7px 9px;border-radius:6px;max-width:260px;z-index:20;line-height:1.4}
+.tip b{font-weight:600}
+details summary{cursor:pointer;font-size:13px;color:var(--accent)}
+.two{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.two{grid-template-columns:1fr}}
+.foot{font-size:13px;color:var(--muted);display:grid;gap:8px;border-top:1px solid var(--line);padding-top:18px}
+@media (prefers-reduced-motion:no-preference){svg rect.bar{transition:width .35s ease,x .35s ease}}
+</style>
+</head>
+<body style="margin:0">
+<div class="wrap">
+<header class="hero">
+ <div class="eyebrow">Composite indicator · market screening</div>
+ <h1>Which Latin American market should a Viennese coffee roaster enter first?</h1>
+ <p class="lede">Six markets, 45 public indicators across six PESTEL dimensions, one weighted score. Change the weights or the normalisation and the ranking recalculates from the raw data.</p>
+ <div class="verdict" id="verdict" aria-live="polite"></div>
+</header>
+
+<section aria-labelledby="h-method">
+ <h2 id="h-method">How the score is built</h2>
+ <div class="steps">
+  <div class="step"><span class="n">Step 1</span><h3>Collect</h3><p>45 indicators per country (5 political, 10 economic, 10 social, 10 technological, 5 environmental, 5 legal), latest year, one public source each.</p></div>
+  <div class="step"><span class="n">Step 2</span><h3>Normalise</h3><p>Min-max: <code>100·(x−min)/(max−min)</code>, reversed where lower is better. Check with T-scores: <code>50+10·z</code>.</p></div>
+  <div class="step"><span class="n">Step 3</span><h3>Weight</h3><p>Weights per dimension, fixed before data collection and split equally among its indicators.</p></div>
+  <div class="step"><span class="n">Step 4</span><h3>Aggregate</h3><p>Score = <code>Σ weight × dimension mean</code>. A weighted sum, so strengths offset weaknesses.</p></div>
+  <div class="step"><span class="n">Step 5</span><h3>Stress-test</h3><p>Re-rank under four alternative weight sets and with T-scores. A stable rank is a robust result.</p></div>
+ </div>
+</section>
+
+<section aria-labelledby="h-model">
+ <h2 id="h-model">Live model</h2>
+ <div class="panel controls">
+  <div class="row"><span class="lbl">Weight set</span><span id="presets" class="row"></span></div>
+  <div class="sliders" id="sliders"></div>
+  <div class="row"><span class="lbl">Normalisation</span>
+   <button class="seg" id="m-mm" aria-pressed="true">Min-max 0–100</button>
+   <button class="seg" id="m-t" aria-pressed="false">T-score (50 = average)</button>
+  </div>
+ </div>
+ <div class="panel" style="display:grid;gap:12px">
+  <div style="display:grid;gap:4px"><strong>Weighted score by country</strong><span class="note" id="sumnote"></span></div>
+  <div class="legend" id="legend"></div>
+  <div class="chart" id="bars"></div>
+  <details><summary>Show as table</summary><div class="tw"><table id="bartable"></table></div></details>
+ </div>
+</section>
+
+<section aria-labelledby="h-rob">
+ <h2 id="h-rob">How stable is the ranking?</h2>
+ <p class="note">Rank of each country under the five fixed weight sets and your current weights, with the current normalisation. A narrow rank range means the result does not depend on one choice of weights.</p>
+ <div class="panel tw"><table id="rob"></table></div>
+</section>
+
+<section aria-labelledby="h-ind">
+ <h2 id="h-ind">The 45 indicators</h2>
+ <p class="note">Normalised score per indicator and country (darker = better within the six). Select an indicator to see its raw values and where min-max and T-scores disagree.</p>
+ <div class="two">
+  <div class="panel tw"><table class="hm" id="hm"></table></div>
+  <div class="panel detail" id="detail"></div>
+ </div>
+</section>
+
+<section aria-labelledby="h-use">
+ <h2 id="h-use">Using the method elsewhere</h2>
+ <div class="panel" style="display:grid;gap:10px">
+  <p>The model is generic: any market screening that compares a fixed set of countries on many indicators can reuse it. Swap the indicators, set the weights before looking at the data, and report the rank range rather than a single rank.</p>
+  <p><strong>Known limits.</strong> With six countries, min-max stretches small gaps and one outlier (Mexico's tourist arrivals, Brazil's coffee market) can squeeze the others towards zero. A weighted sum lets a large market offset weak institutions; knock-out conditions such as a prohibitive tariff need a separate filter. Some indicators are proxies, and data years range from 2015 to 2026.</p>
+ </div>
+</section>
+
+<footer class="foot">
+ <p>Data: values collected from public sources (World Bank WDI, WGI and LPI, UN agencies, OECD, Transparency International, WIPO, Yale EPI, ND-GAIN, EU Access2Markets, Euromonitor and Statista via a university library, among others) by student groups in the course International Business Projects, WU Vienna, winter term 2026/27, status November 2026. Weights and alternative weight sets as fixed by the course instructor.</p>
+ <p>Teaching case built around Julius Meinl's interest in Latin America. Julius Meinl provided no data and has not reviewed or endorsed this analysis. Scores compare the six markets with each other; they are not forecasts.</p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script>
+const D=[["PO01","Political stability and absence of violence (WGI) [Score 0-100]","H",[68.4,58.87,68.6,48.911,54.95,88.39]],["PO02","Government effectiveness (WGI) [Score 0-100]","H",[58,51.61,73.68,50.431,48.65,70]],["PO03","Corruption Perceptions Index [Score 0-100]","H",[36,35,63,37,27,73]],["PO04","OECD country risk classification [Category 0-7]","L",[7,4,0,4,3,3]],["PO05","Global Peace Index [Score 1-5]","L",[1.922,2.33,1.826,2.74,2.65,1.75]],["EC01","GDP per capita, PPP [Int. $]","H",[32587,23433.3,37774.1,22640.42,25868.5,38314.9]],["EC02","Inflation, consumer prices [Annual %]","L",[31.5,5,4.2,5.14,3.8,4.7]],["EC03","Real GDP growth [Annual %]","H",[4.4,2.3,2.5,2.64,0.6,1.8]],["EC04","GDP, current US$ [US$ bn]","H",[683.1,2279.92,357.371,457.41,1830,85.348]],["EC05","Exchange-rate change against US$ [Annual %]","L",[35.7,3.7,0.82,-0.52,19.24,2.44]],["EC06","Trade openness [% of GDP]","H",[30.4,35,65,35.37,80,49.72]],["EC07","Unemployment rate [% of labour force]","L",[7.1,6,9,8.29,2.7,7.52]],["EC08","FDI, net inflows [% of GDP]","H",[0.6,3.4,4.1,2.53,2.4,2.28]],["EC09","Imports of roasted coffee, HS 0901.21 [US$ thousand]","H",[50211.05,87663.46,71800.26,3371.19,72143.39,7541.53]],["EC10","Coffee market size, retail value [US$ m]","H",[960.1,13041.5,654.2,1057.03,3126.35,152.7]],["SO01","Coffee consumption per capita [kg/person/year]","H",[2.51,5.03,1.41,1.44,0.83,2.45]],["SO02","Out-of-home coffee consumption [kg/person/year]","H",[0.1,0.82,0.07,0.23,0.05,0.19]],["SO03","Urban population [% of population]","H",[92.4,88,89.2,78.78,80.04,96]],["SO04","Population in cities above 1 million [% of population]","H",[44.2,44,35.2,44.54,42.66,53]],["SO05","International tourist arrivals [arrivals/year]","H",[7399000,6353000,5431000,4531000,97406000,3480000]],["SO06","Share of tourist arrivals from Europe [% of arrivals]","H",[13,22.2,7.34,15,8.72,5.52]],["SO07","European-born residents [% of population]","H",[0.32,0.1312,0.26,0.07,0.05,1.28]],["SO08","Human Development Index [Index 0-1]","H",[0.865,0.786,0.878,0.788,0.789,0.862]],["SO09","Cultural distance from Austria, Hofstede [mean abs. difference]","L",[21.17,21.83,30.83,31.67,31.17,30.67]],["SO10","Gini index [Index 0-100]","L",[42.4,50.3,43,54.4,42.6,40]],["TE01","Individuals using the Internet [% of population]","H",[89.7,84,96,79.35,83.12,92]],["TE02","Fixed broadband subscriptions [per 100 people]","H",[26.1,24.08,23.73,17.22,21.74,33.04]],["TE03","Mobile cellular subscriptions [per 100 people]","H",[140.23,102,133,174.09,116.49,146]],["TE04","4G mobile network coverage [% of population]","H",[97.68,93.3,96,100,97.8,93.9]],["TE05","Secure Internet servers [per 1 million people]","H",[5453,6941,11913,1126.21,531.66,4641]],["TE06","Account ownership [% of adults 15+]","H",[81.74,86.38,85.07,57.06,53.03,73.75]],["TE07","Logistics Performance Index, overall [Score 1-5]","H",[2.8,3.2,3,2.9,2.9,3]],["TE08","Container port traffic [TEU]","H",[1471434,13893906,4474125,5188127,9284170,1115000]],["TE09","Liner Shipping Connectivity Index [Q1 2023 = 100]","H",[110.93,165.08,107.75,211.24,201.12,96.41]],["TE10","Global Innovation Index [Score 0-100]","H",[26.8,32.9,33.1,28.5,30.5,28.8]],["EN01","ND-GAIN Country Index [Score 0-100]","H",[49.6,50.7,60.1,50.5,47.6,52]],["EN02","Renewable energy consumption [% of final energy]","H",[9.2,50.2,24.2,29.7,13,57.8]],["EN03","Environmental Performance Index [Score 0-100]","H",[46.06,48.27,50.95,48.83,46.09,36.91]],["EN04","Water stress [% of freshwater withdrawn]","L",[10,1.4,8.98,3.63,44.95,12.05]],["EN05","Forest area [% of land area]","H",[17.1,58.2,24.5,53.71,34.2,11.5]],["LE01","Regulatory quality (WGI) [Score 0-100]","H",[53.9,47.89,66.44,52.099,51.5,65]],["LE02","Rule of law (WGI) [Score 0-100]","H",[56.9,50.63,69.84,48.28,39.4,74.11]],["LE03","Applied tariff on roasted coffee from the EU [%]","L",[8.1,8.1,0,0,45,8.1]],["LE04","Intellectual property rights, IPRI [Score 0-10]","H",[4.348,4.99,6.03,4.779,4.326,5.636]],["LE05","Customs clearance efficiency, LPI [Score 1-5]","H",[2.7,2.9,3,2.5,2.5,2.9]]];
+function model(D,W,mode){const C=6,dims=['PO','EC','SO','TE','EN','LE'];
+ const norm=D.map(([id,n,dir,v])=>{const mn=Math.min(...v),mx=Math.max(...v),m=v.reduce((a,b)=>a+b)/C,sd=Math.sqrt(v.reduce((a,b)=>a+(b-m)**2,0)/C),s=dir==='L'?-1:1;
+  return {mm:v.map(x=>mx===mn?50:100*(dir==='L'?(mx-x):(x-mn))/(mx-mn)),t:v.map(x=>sd?50+10*s*(x-m)/sd:50)}});
+ const dim=dims.map(d=>{const idx=D.map((r,i)=>r[0].startsWith(d)?i:-1).filter(i=>i>=0);return [...Array(C)].map((_,c)=>idx.reduce((a,i)=>a+norm[i][mode][c],0)/idx.length)});
+ const tot=W.reduce((a,b)=>a+b,0);const contrib=dims.map((d,k)=>dim[k].map(x=>x*W[k]/tot));
+ const total=[...Array(C)].map((_,c)=>contrib.reduce((a,r)=>a+r[c],0));
+ const rank=total.map(x=>1+total.filter(y=>y>x+1e-9).length);return {norm,dim,contrib,total,rank}}
+const C=['Argentina','Brazil','Chile','Colombia','Mexico','Uruguay'];
+const DIMS=[['PO','Political'],['EC','Economic'],['SO','Social'],['TE','Technological'],['EN','Environmental'],['LE','Legal']];
+const SW=['--s1','--s2','--s3','--s4','--s5','--s6'];
+const PRE={'Baseline':[15,25,25,10,5,20],'Equal':[17,17,17,17,16,16],'Economy-led':[10,40,20,10,5,15],'Access-led':[20,15,15,5,5,40],'Society-led':[10,20,40,10,5,15]};
+let W=[...PRE.Baseline],mode='mm',sel=42;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=v=>Math.abs(v)>=1e6?(v/1e6).toLocaleString('en',{maximumFractionDigits:2})+' m':Math.abs(v)>=1000?v.toLocaleString('en',{maximumFractionDigits:0}):v.toLocaleString('en',{maximumFractionDigits:3});
+const split=n=>{const m=n.match(/^(.*?)\s*\[(.*)\]$/);return m?[m[1],m[2]]:[n,''];};
+const tip=$('tip');
+function showTip(e,html){tip.innerHTML=html;tip.hidden=false;const x=Math.min(e.clientX+14,innerWidth-270),y=e.clientY+14;tip.style.left=x+'px';tip.style.top=(y+tip.offsetHeight>innerHeight?e.clientY-tip.offsetHeight-10:y)+'px';}
+function hideTip(){tip.hidden=true;}
+function activePreset(){return Object.keys(PRE).find(k=>PRE[k].every((v,i)=>v===W[i]));}
+// controls
+$('presets').innerHTML=Object.keys(PRE).map(k=>`<button class="seg" data-p="${k}">${k}</button>`).join('');
+$('presets').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;W=[...PRE[b.dataset.p]];syncSliders();render();});
+$('sliders').innerHTML=DIMS.map(([k,n],i)=>`<div class="sl"><label for="w-${k}"><span class="sw" style="background:var(${SW[i]})"></span> ${n}</label><input type="range" id="w-${k}" min="0" max="60" step="1" value="${W[i]}" data-i="${i}"><span class="num" id="v-${k}"></span></div>`).join('');
+$('sliders').addEventListener('input',e=>{if(e.target.dataset.i==null)return;W[+e.target.dataset.i]=+e.target.value;render();});
+function syncSliders(){DIMS.forEach(([k],i)=>{$('w-'+k).value=W[i];});}
+['mm','t'].forEach(m=>$('m-'+m).addEventListener('click',()=>{mode=m;render();}));
+$('legend').innerHTML=DIMS.map(([k,n],i)=>`<span><span class="sw" style="background:var(${SW[i]})"></span>${n}</span>`).join('');
+
+function render(){
+ const tot=W.reduce((a,b)=>a+b,0)||1;
+ DIMS.forEach(([k],i)=>{$('v-'+k).textContent=Math.round(100*W[i]/tot)+'%';});
+ const ap=activePreset();document.querySelectorAll('#presets button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===ap?'true':'false'));
+ $('m-mm').setAttribute('aria-pressed',mode==='mm');$('m-t').setAttribute('aria-pressed',mode==='t');
+ const Wn=W.reduce((a,b)=>a+b,0)?W:[1,1,1,1,1,1];
+ const r=model(D,Wn,mode);
+ $('sumnote').textContent=(ap?ap+' weights':'Custom weights')+' · '+(mode==='mm'?'min-max normalisation, 0 = weakest, 100 = best of six on every indicator':'T-scores, 50 = average of the six countries')+' · bar segments show each dimension’s contribution';
+ const order=[...C.keys()].sort((a,b)=>r.total[b]-r.total[a]);
+ $('verdict').innerHTML=order.map(c=>`<span class="chip"><b>#${r.rank[c]}</b>${C[c]} <span class="num" style="color:var(--muted)">${r.total[c].toFixed(1)}</span></span>`).join('');
+ drawBars(r,order);drawTable(r,order);drawRob();drawHeat(r);drawDetail(r);
+}
+function drawBars(r,order){
+ const w=Math.max(560,$('bars').clientWidth||900),L=96,R=56,rowH=38,top=22,h=top+rowH*6+8,max=mode==='mm'?100:70;
+ const x=v=>L+(w-L-R)*v/max;
+ let s=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Weighted score by country, stacked by PESTEL dimension">`;
+ const ticks=mode==='mm'?[0,25,50,75,100]:[0,10,20,30,40,50,60,70];
+ ticks.forEach(t=>{s+=`<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${top-6}" y2="${h-8}"/><text x="${x(t)}" y="${top-10}" text-anchor="middle">${t}</text>`;});
+ order.forEach((c,j)=>{const y=top+j*rowH+6,bh=rowH-14;let cx=x(0);
+  s+=`<text class="country" x="${L-10}" y="${y+bh/2+4}" text-anchor="end">${C[c]}</text>`;
+  DIMS.forEach(([k,n],i)=>{const v=r.contrib[i][c],bw=Math.max(0,x(v)-x(0));if(bw<=0)return;const last=i===5||DIMS.slice(i+1).every((_,q)=>r.contrib[i+1+q][c]<=0);
+   s+=`<rect class="bar" x="${cx}" y="${y}" width="${Math.max(0,bw-2)}" height="${bh}" rx="${last?4:1}" style="fill:var(${SW[i]})" data-c="${c}" data-i="${i}"/>`;cx+=bw;});
+  s+=`<text class="val" x="${cx+6}" y="${y+bh/2+4}">${r.total[c].toFixed(1)}</text>`;});
+ s+='</svg>';$('bars').innerHTML=s;
+ $('bars').querySelectorAll('rect.bar').forEach(el=>{el.addEventListener('mousemove',e=>{const c=+el.dataset.c,i=+el.dataset.i;showTip(e,`<b>${C[c]} · ${DIMS[i][1]}</b><br>Dimension score ${r.dim[i][c].toFixed(1)}<br>Contribution ${r.contrib[i][c].toFixed(1)} of ${r.total[c].toFixed(1)}`);});el.addEventListener('mouseleave',hideTip);});
+}
+function drawTable(r,order){
+ $('bartable').innerHTML=`<thead><tr><th>Rank</th><th>Country</th>${DIMS.map(d=>`<th class="num">${d[1]}</th>`).join('')}<th class="num">Total</th></tr></thead><tbody>`+
+ order.map(c=>`<tr><td class="num">${r.rank[c]}</td><td>${C[c]}</td>${DIMS.map((_,i)=>`<td class="num">${r.dim[i][c].toFixed(1)}</td>`).join('')}<td class="num"><b>${r.total[c].toFixed(1)}</b></td></tr>`).join('')+'</tbody>';
+}
+const rkStyle=k=>{const bg=['--q9','--q7','--q5','--q3','--q1','--q1'][k-1],fg=k<=3?'var(--bg)':'var(--ink)';return `background:var(${bg});color:${fg}`;};
+function drawRob(){
+ const sets=Object.entries(PRE);const ap=activePreset();const cols=sets.map(([k,w])=>[k,model(D,w,mode).rank]);
+ if(!ap)cols.push(['Your weights',model(D,W.reduce((a,b)=>a+b,0)?W:[1,1,1,1,1,1],mode).rank]);
+ const order=[...C.keys()].sort((a,b)=>cols[0][1][a]-cols[0][1][b]);
+ $('rob').innerHTML=`<thead><tr><th>Country</th>${cols.map(([k])=>`<th class="num">${esc(k)}</th>`).join('')}<th class="num">Rank range</th></tr></thead><tbody>`+
+ order.map(c=>{const rs=cols.map(x=>x[1][c]),mn=Math.min(...rs),mx=Math.max(...rs);return `<tr><td><b>${C[c]}</b></td>${rs.map(k=>`<td class="num"><span class="rk" style="${rkStyle(k)}">${k}</span></td>`).join('')}<td class="num mono">${mn===mx?mn:mn+'–'+mx}</td></tr>`;}).join('')+'</tbody>';
+}
+const heatBg=v=>{const s=mode==='mm'?v:Math.max(0,Math.min(100,(v-30)*2.5));return s>=80?'--q9':s>=60?'--q7':s>=40?'--q5':s>=20?'--q3':'--q1';};
+function drawHeat(r){
+ let h=`<thead><tr><th></th><th></th>${C.map(c=>`<th>${c.slice(0,3).toUpperCase()}</th>`).join('')}</tr></thead><tbody>`;let prev='';
+ D.forEach(([id,n],i)=>{const g=id.slice(0,2);if(prev&&g!==prev)h+='<tr class="gap"><td colspan="8"></td></tr>';prev=g;
+  h+=`<tr class="${i===sel?'sel':''}" data-i="${i}"><td class="id">${id}</td><td class="nm" title="${esc(split(n)[0])}">${esc(split(n)[0])}</td>`+
+  r.norm[i][mode].map((v,c)=>{const bg=heatBg(v),dark=['--q9','--q7','--q5'].includes(bg);return `<td class="c" tabindex="0" data-i="${i}" data-c="${c}" style="background:var(${bg});color:${dark?'var(--bg)':'var(--ink)'}">${Math.round(v)}</td>`;}).join('')+'</tr>';});
+ $('hm').innerHTML=h+'</tbody>';
+}
+$('hm').addEventListener('click',e=>{const tr=e.target.closest('tr[data-i]');if(!tr)return;sel=+tr.dataset.i;render();});
+$('hm').addEventListener('keydown',e=>{if(e.key==='Enter'){const td=e.target.closest('td[data-i]');if(td){sel=+td.dataset.i;render();}}});
+$('hm').addEventListener('mousemove',e=>{const td=e.target.closest('td.c');if(!td)return hideTip();const i=+td.dataset.i,c=+td.dataset.c,[nm,u]=split(D[i][1]);
+ showTip(e,`<b>${C[c]} · ${D[i][0]}</b><br>${esc(nm)}<br>Value ${fmt(D[i][3][c])} ${esc(u)}<br>${D[i][2]==='L'?'Lower':'Higher'} is better · score ${td.textContent}`);});
+$('hm').addEventListener('mouseleave',hideTip);
+function drawDetail(r){
+ const [id,n,dir,v]=D[sel],[nm,u]=split(n),mn=Math.min(...v),mx=Math.max(...v),w=420,L=12,R=12,y=46;
+ const x=val=>mx===mn?w/2:L+(w-L-R)*(val-mn)/(mx-mn);
+ let s=`<svg viewBox="0 0 ${w} 96" width="100%" role="img" aria-label="Raw values of ${esc(nm)}"><line class="grid" x1="${L}" x2="${w-R}" y1="${y}" y2="${y}"/>`;
+ const grp={};C.forEach((c,i)=>{(grp[v[i]]=grp[v[i]]||[]).push(c.slice(0,3));});
+ Object.keys(grp).map(Number).sort((a,b)=>a-b).forEach((val,j)=>{const px=x(val),anc=px<60?'start':px>w-60?'end':'middle';s+=`<circle cx="${px}" cy="${y}" r="6" style="fill:var(--accent);stroke:var(--panel);stroke-width:2"/><text x="${px}" y="${j%2?y+26:y-14}" text-anchor="${anc}">${grp[val].join(' · ')}</text>`;});
+ s+=`<text x="${L}" y="${y+44}">${esc(fmt(mn))}</text><text x="${w-R}" y="${y+44}" text-anchor="end">${esc(fmt(mx))}</text></svg>`;
+ $('detail').innerHTML=`<div class="eyebrow">${id} · ${DIMS.find(d=>id.startsWith(d[0]))[1]}</div><strong>${esc(nm)}</strong><span class="note">${esc(u)} · ${dir==='L'?'lower is better':'higher is better'}</span>${s}
+ <div class="tw"><table><thead><tr><th>Country</th><th class="num">Value</th><th class="num">Min-max</th><th class="num">T-score</th></tr></thead><tbody>${C.map((c,i)=>`<tr><td>${c}</td><td class="num">${fmt(v[i])}</td><td class="num">${r.norm[sel].mm[i].toFixed(0)}</td><td class="num">${r.norm[sel].t[i].toFixed(0)}</td></tr>`).join('')}</tbody></table></div>
+ <p class="note">Min-max puts the weakest of the six at 0 and the best at 100, however small the gap. T-scores keep the real distances: 50 is the average, 60 one standard deviation better.</p>`;
+}
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(render,150);});
+render();
+</script>
+</body>
+</html>
