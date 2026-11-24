@@ -5,156 +5,260 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Latin America Market Scorecard</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: one reading column; an analyst's worksheet that flows question -> method -> live model -> robustness -> indicators */
-:root{
- --bg:#f5f6f8;--panel:#ffffff;--ink:#141a22;--ink2:#4a5361;--muted:#6f7886;--line:#dfe3e9;--accent:#1c5cab;--accent-soft:#e7eef8;
- --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;
- --q1:#cde2fb;--q3:#86b6ef;--q5:#3987e5;--q7:#1c5cab;--q9:#0d366b;
- --f-disp:"Fraunces",Georgia,serif;--f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+/* alpha-metrics.ai brand tokens and base styles for HTML pages: blog posts,
+   dashboards, reports. Paste into a <style> block or link it.
+   Light by default; dark follows the system unless data-theme="light" is set,
+   and data-theme="dark" forces dark. No web fonts are loaded. */
+
+:root {
+  color-scheme: light;
+  --brand: #104281;          /* logo blue, headings accents */
+  --page: #fbfaf8;
+  --card: #ffffff;
+  --tint: #f3f1ec;
+  --hair: #e3e1db;
+  --ink: #0e1a2b;
+  --ink-2: #475467;
+  --ink-3: #5c6679;
+  --link: #1c5cab;
+  --btn-bg: #1c5cab;
+  --btn-bg-hover: #154a8c;
+  --btn-ink: #ffffff;
+  --mark: #2a78d6;           /* the one highlighted series */
+  --mark-dim: #8f8d86;       /* everything else in a chart */
+  --grid: #e3e1db;
+  --ramp-1: #86b6ef; --ramp-2: #5598e7; --ramp-3: #2a78d6; --ramp-4: #1c5cab; --ramp-5: #104281;
+  --ok: #0ca30c;
+  --stop: #d03b3b;
+  --shadow: 0 1px 2px rgba(14, 26, 43, .06), 0 10px 30px rgba(14, 26, 43, .07);
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --radius: 16px;
+  --logo-light: block; --logo-dark: none;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121519;--panel:#1a1e24;--ink:#eef1f5;--ink2:#c0c7d1;--muted:#949daa;--line:#2e343d;--accent:#86b6ef;--accent-soft:#1f2a38;
- --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#0ca30c;--q1:#1b2a3d;--q3:#184f95;--q5:#2a78d6;--q7:#6da7ec;--q9:#cde2fb;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#121519;--panel:#1a1e24;--ink:#eef1f5;--ink2:#c0c7d1;--muted:#949daa;--line:#2e343d;--accent:#86b6ef;--accent-soft:#1f2a38;
- --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#0ca30c;--q1:#1b2a3d;--q3:#184f95;--q5:#2a78d6;--q7:#6da7ec;--q9:#cde2fb;color-scheme:dark}
-*{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
-.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 56px;display:grid;gap:28px}
-h1,h2{font-family:var(--f-disp);font-weight:600;text-wrap:balance;margin:0;letter-spacing:-.01em}
-h1{font-size:clamp(28px,4.4vw,42px);line-height:1.12}
-h2{font-size:22px}
-p{margin:0;max-width:68ch}
-.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-.lede{color:var(--ink2);font-size:17px}
-.mono,.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --brand: #9cc3f3;
+    --page: #121211; --card: #1a1a19; --tint: #1d1d1b; --hair: #2e2e2b;
+    --ink: #f2f1ec; --ink-2: #c3c2b7; --ink-3: #9b9a92;
+    --link: #86b8f2; --btn-bg: #86b8f2; --btn-bg-hover: #a4cbf6; --btn-ink: #0b1522;
+    --mark: #3987e5; --mark-dim: #7f7e77; --grid: #2e2e2b;
+    --ramp-1: #184f95; --ramp-2: #256abf; --ramp-3: #3987e5; --ramp-4: #6da7ec; --ramp-5: #9ec5f4;
+    --ok: #3fbf3f; --stop: #f97066;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px rgba(0, 0, 0, .35);
+    --logo-light: none; --logo-dark: block;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --brand: #9cc3f3;
+  --page: #121211; --card: #1a1a19; --tint: #1d1d1b; --hair: #2e2e2b;
+  --ink: #f2f1ec; --ink-2: #c3c2b7; --ink-3: #9b9a92;
+  --link: #86b8f2; --btn-bg: #86b8f2; --btn-bg-hover: #a4cbf6; --btn-ink: #0b1522;
+  --mark: #3987e5; --mark-dim: #7f7e77; --grid: #2e2e2b;
+  --ramp-1: #184f95; --ramp-2: #256abf; --ramp-3: #3987e5; --ramp-4: #6da7ec; --ramp-5: #9ec5f4;
+  --ok: #3fbf3f; --stop: #f97066;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px rgba(0, 0, 0, .35);
+  --logo-light: none; --logo-dark: block;
+}
+
+/* base */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 400 1.0625rem/1.65 var(--sans);
+  -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { margin: 0 0 .5em; font-family: var(--serif); font-weight: 600; line-height: 1.15;
+  letter-spacing: -.01em; color: var(--ink); text-wrap: balance; }
+h1 { font-size: clamp(2.1rem, 5vw, 3.2rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin-top: 1.6em; }
+h3 { font-size: 1.25rem; margin-top: 1.4em; }
+p, li { color: var(--ink-2); }
+a { color: var(--link); text-underline-offset: 2px; }
+.kicker { font: 600 .8rem/1.2 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+.lede { font-size: 1.2rem; color: var(--ink-2); }
+.muted { color: var(--ink-3); }
+.small { font-size: .9rem; }
+.wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+.prose { width: min(720px, 100% - 32px); margin-inline: auto; }
+.logo-light { display: var(--logo-light); } .logo-dark { display: var(--logo-dark); }
+
+/* header + footer */
+.am-header { border-bottom: 1px solid var(--hair); }
+.am-header .wrap { display: flex; align-items: center; min-height: 64px; gap: 20px; }
+.am-header img { height: 28px; width: auto; }
+.am-footer { border-top: 1px solid var(--hair); margin-top: 72px; padding: 32px 0 40px; color: var(--ink-3); font-size: .9rem; }
+
+/* components */
+.card { background: var(--card); border: 1px solid var(--hair); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); }
+.kpi { display: flex; flex-direction: column; gap: 4px; }
+.kpi .label { font-size: .9rem; color: var(--ink-3); }
+.kpi .value { font: 600 2.4rem/1 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums; }
+.kpi .ci, .kpi .base { font-size: .85rem; color: var(--ink-3); }
+.delta-up { color: var(--ok); } .delta-down { color: var(--stop); }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; border: 1px solid transparent;
+  background: var(--btn-bg); color: var(--btn-ink); font: 600 .97rem/1 var(--sans); text-decoration: none; }
+.btn:hover { background: var(--btn-bg-hover); }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: var(--tint);
+  border: 1px solid var(--hair); font-size: .85rem; color: var(--ink-2); }
+.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mark); }
+blockquote { margin: 1.6em 0; padding: 4px 0 4px 20px; border-left: 3px solid var(--mark); font: 1.25rem/1.5 var(--serif); color: var(--ink); }
+table { width: 100%; border-collapse: collapse; font-size: .95rem; font-variant-numeric: tabular-nums; }
+th { text-align: left; font-weight: 600; color: var(--ink); border-bottom: 2px solid var(--ink); padding: 8px 10px; }
+td { border-bottom: 1px solid var(--hair); padding: 8px 10px; color: var(--ink-2); }
+td.num, th.num { text-align: right; }
+figure { margin: 2em 0; }
+figcaption, .source { font-size: .85rem; color: var(--ink-3); margin-top: 8px; }
+.grid-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+
+
+/* Layout: one analyst column; question -> method -> live model -> robustness -> indicators */
+body{font-size:1rem}
+.am-header .wrap,.wrap{width:auto;max-width:1060px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.am-header svg{height:28px;width:auto}
+.am-header .tag{margin-left:auto}
+main.wrap{display:grid;gap:40px;padding-block:36px 0}
 section{display:grid;gap:14px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px}
+h1{margin:0;font-size:clamp(1.9rem,4.4vw,2.8rem)}
+h2{margin:0;font-size:clamp(1.35rem,2.6vw,1.7rem)}
+h3{margin:0;font-size:1.1rem}
+p{margin:0;max-width:68ch}
 .hero{display:grid;gap:14px}
-.verdict{display:flex;flex-wrap:wrap;gap:10px}
-.chip{display:flex;align-items:baseline;gap:8px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px}
-.chip b{font-family:var(--f-mono);font-weight:500;color:var(--accent)}
-.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
-.step{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:6px;align-content:start;min-width:0}
-.step .n{font:500 12px var(--f-mono);color:var(--muted)}
-.step h3{margin:0;font-size:15px}
-.step p{font-size:13px;color:var(--ink2)}
-.step code{font:12px var(--f-mono);color:var(--ink);background:var(--accent-soft);padding:1px 4px;border-radius:4px}
-@media (max-width:820px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:baseline;gap:8px;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--hair);font-size:.92rem;color:var(--ink)}
+.pill .r{font-family:var(--serif);font-weight:600;color:var(--brand)}
+.pill .s{color:var(--ink-3);font-variant-numeric:tabular-nums}
+.pill.top{border-color:var(--mark)}
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.step{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:16px;display:grid;gap:6px;align-content:start;min-width:0}
+.step .n{font:600 .75rem/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.step p{font-size:.9rem}
+.step code{font:.82rem ui-monospace,Menlo,Consolas,monospace;background:var(--tint);padding:1px 4px;border-radius:4px;color:var(--ink)}
+@media (max-width:860px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:460px){.steps{grid-template-columns:1fr}}
-.controls{display:grid;gap:16px}
+.controls{display:grid;gap:16px;background:var(--tint);border:1px solid var(--hair);border-radius:12px;padding:18px}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.lbl{font:500 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:6px}
-button.seg{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
-button.seg[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
-button.seg:focus-visible,input:focus-visible,.hm td:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.sliders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 20px}
-@media (max-width:700px){.sliders{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.sl{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;min-width:0}
-.sw{width:10px;height:10px;border-radius:3px;display:inline-block}
-.sl label{font-size:13px;white-space:nowrap}
-.sl input{width:100%;accent-color:var(--accent);min-width:0}
-.sl .num{font-size:13px;width:3.2em;text-align:right;color:var(--ink2)}
-.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink2)}
-.legend span{display:inline-flex;align-items:center;gap:6px}
+.lbl{font:600 .75rem/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-right:6px}
+button.seg{font:inherit;font-size:.9rem;border:1px solid var(--hair);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 13px;cursor:pointer}
+button.seg[aria-pressed="true"]{background:var(--btn-bg);border-color:var(--btn-bg);color:var(--btn-ink)}
+button.seg:focus-visible,input:focus-visible,.hm td:focus-visible,svg [tabindex]:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+.sliders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 22px}
+@media (max-width:720px){.sliders{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:420px){.sliders{grid-template-columns:1fr}}
+.sl{display:grid;grid-template-columns:7.5em 1fr 3em;gap:8px;align-items:center;min-width:0}
+.sl label{font-size:.9rem;color:var(--ink)}
+.sl input{width:100%;accent-color:var(--link);min-width:0}
+.sl .v{font-size:.9rem;text-align:right;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.card{display:grid;gap:12px;box-shadow:none}
+.ctitle{font-family:var(--serif);font-weight:600;font-size:1.2rem;color:var(--ink);line-height:1.25}
+.csub{font-size:.9rem;color:var(--ink-3)}
 .chart{width:100%;overflow-x:auto}
-svg text{fill:var(--ink2);font-family:var(--f-body);font-size:12px}
+svg text{fill:var(--ink-2);font-family:var(--sans);font-size:12px}
 svg .country{fill:var(--ink);font-size:13px;font-weight:600}
-svg .val{fill:var(--ink);font-family:var(--f-mono);font-size:12px}
-svg .grid{stroke:var(--line);stroke-width:1}
-.note{font-size:13px;color:var(--muted)}
-table{border-collapse:collapse;width:100%;font-size:13px}
-th,td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line)}
-th{font:500 11px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
-td.num,th.num{text-align:right}
-.rk{display:inline-grid;place-items:center;width:28px;height:24px;border-radius:5px;font:500 12px var(--f-mono)}
+svg .val{fill:var(--ink);font-size:12px;font-variant-numeric:tabular-nums}
+svg .gl{stroke:var(--grid);stroke-width:1}
+svg rect.bar{cursor:pointer}
+.split{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.split{grid-template-columns:1fr}}
 .tw{overflow-x:auto}
-.hm{border-collapse:separate;border-spacing:2px;font-size:12px}
+table{font-size:.9rem}
+.rk{display:inline-grid;place-items:center;width:28px;height:24px;border-radius:6px;font-weight:600;font-size:.82rem}
+.hm{border-collapse:separate;border-spacing:2px;font-size:.78rem;width:auto}
 .hm th,.hm td{border:0;padding:0}
-.hm td.c{width:62px;height:22px;border-radius:3px;text-align:center;font:11px/22px var(--f-mono);cursor:pointer}
-.hm td.id{font:11px var(--f-mono);color:var(--muted);padding-right:6px;white-space:nowrap}
-.hm td.nm{padding-right:10px;max-width:290px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.hm tr.sel td.nm{color:var(--accent);font-weight:600}
-.hm th{font-size:10px;padding-bottom:4px;text-align:center}
+.hm th{font-size:.7rem;font-weight:600;color:var(--ink-3);text-align:center;padding-bottom:4px;letter-spacing:.06em}
+.hm td.c{width:58px;height:22px;border-radius:3px;text-align:center;line-height:22px;cursor:pointer;font-variant-numeric:tabular-nums}
+.hm td.id{color:var(--ink-3);padding-right:6px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.hm td.nm{padding-right:10px;max-width:270px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:var(--ink-2)}
+.hm tr.sel td.nm{color:var(--link);font-weight:600}
 .hm tr.gap td{height:8px}
-.detail{display:grid;gap:10px;align-content:start}
-.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:7px 9px;border-radius:6px;max-width:260px;z-index:20;line-height:1.4}
-.tip b{font-weight:600}
-details summary{cursor:pointer;font-size:13px;color:var(--accent)}
-.two{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}
-@media (max-width:820px){.two{grid-template-columns:1fr}}
-.foot{font-size:13px;color:var(--muted);display:grid;gap:8px;border-top:1px solid var(--line);padding-top:18px}
-@media (prefers-reduced-motion:no-preference){svg rect.bar{transition:width .35s ease,x .35s ease}}
+.tip{position:fixed;pointer-events:none;background:var(--card);color:var(--ink);border:1px solid var(--hair);box-shadow:var(--shadow);font-size:.82rem;padding:8px 10px;border-radius:8px;max-width:270px;z-index:20;line-height:1.45}
+details summary{cursor:pointer;font-size:.9rem;color:var(--link)}
+.note{font-size:.9rem;color:var(--ink-3)}
+.am-footer{margin-top:56px}
+.am-footer .wrap{display:grid;gap:8px}
+.am-footer p{color:var(--ink-3);max-width:none}
+@media (prefers-reduced-motion:no-preference){svg rect.bar{transition:width .3s ease}}
+
 </style>
 </head>
-<body style="margin:0">
-<div class="wrap">
-<header class="hero">
- <div class="eyebrow">Composite indicator · market screening</div>
+<body>
+
+<header class="am-header"><div class="wrap"><svg class="logo-light" xmlns="http://www.w3.org/2000/svg" viewBox="-230.2 -155 1657.2 210.1" role="img" aria-label="alpha-metrics.ai"><g transform="translate(-228.2 -153) scale(2.96875)"><rect width="64" height="64" rx="14" fill="#104281"/><path transform="translate(32 32) scale(.86) translate(-31 -32)" d="M50 15C45 33 35 49 24 49C15 49 9 41 9 32C9 23 15 15 24 15C35 15 45 31 53 49" fill="none" stroke="#ffffff" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/></g><path fill="#104281" d="M95.4 -0.6 94.3 0.5Q86.1 0 75.5 0Q67.2 0 59.6 0.5L58.7 -0.6L59.6 -13.7L40.6 0.8Q38.4 2.4 34.2 2.8Q32.5 3 30.3 3Q19.4 3 13.6 -3.5Q7.8 -10.1 7.8 -21.6Q7.8 -36.8 17.5 -43.2Q27.9 -50.1 59.6 -55.7Q59.6 -71.2 51.4 -76.5Q46.4 -79.7 39.5 -79.7Q31.8 -79.7 27.4 -76.6L23.7 -67.5L22.5 -66.8L17.5 -68L16.8 -69.3L17.3 -80.9Q33.4 -92.8 41.5 -94.3Q44.9 -95 50.4 -95Q69.6 -95 77.8 -85Q83.8 -77.6 83.8 -62.5Q83.8 -58.8 83.5 -50.6Q83 -36.9 83 -32.3Q83 -17.6 83.5 -13.5Q84 -9.5 85.8 -8.4Q87.6 -7.3 94.4 -7.1L95.4 -6.1ZM59.6 -23.3V-47.4Q43.5 -43.8 37.8 -39.8Q32.2 -35.7 32.2 -27.4Q32.2 -14.2 43.8 -14.2Q53.7 -14.2 59.6 -23.3ZM51.8 -99.4ZM51.8 7.6ZM159 -0.3 158.1 0.7Q148.8 0 131.3 0Q113.8 0 104.6 0.7L103.7 -0.3V-6.2L104.6 -7.2Q114 -7.5 116.3 -8.7Q118.2 -9.6 118.4 -13.4Q119.1 -26.1 119.1 -57.8V-90.5Q119.1 -111 118.4 -123.7Q118.2 -127.3 116.3 -128.5Q114.3 -129.6 104.9 -129.9L104 -131V-136.3L104.9 -137.4Q123.8 -139.5 142.7 -145.5L144.8 -144.3Q144.8 -141.7 144.5 -134.7Q143.5 -111.3 143.5 -83V-57.8Q143.5 -26.1 144.2 -13.4Q144.4 -9.6 146.3 -8.7Q148.6 -7.5 158 -7.2L159 -6.2ZM275.5 -56.6Q275.5 -44.6 271.2 -33.7Q268.1 -25.7 263 -20.1Q260.7 -17.7 254.6 -13.1Q248.1 -7.9 238.5 -0.6Q232.7 3.2 223.8 3.2Q215.3 3.2 206.8 0.1V36.7Q206.8 41.2 207.9 42.7Q208.5 43.5 210.6 43.9Q212.1 44.3 223.1 45.1L224.1 46.1V52.1L223.1 53.1Q210 52.3 193.2 52.3Q180.9 52.3 168.6 53.1L167.6 52.1V46.3L168.6 45.2Q178.4 44.9 179.9 43.7Q180.9 42.8 181.1 41.8Q181.4 39.9 181.8 32.2Q182.1 26.4 182.2 17.3L182.4 2.1V-54.6Q182.4 -55.6 181.8 -69Q181.5 -75.4 180.8 -77.2Q180.1 -79 176.8 -79.5Q175.6 -79.7 168.2 -80L167.2 -81V-86.4L168.2 -87.5Q186.8 -89.2 206 -95.6L208.1 -94.3Q208.1 -90.1 207.2 -77.4Q213.8 -82.9 223.7 -91Q228.5 -94.6 238.5 -94.6Q262.7 -94.6 271.5 -76.1Q275.5 -67.6 275.5 -56.6ZM250.4 -44.6Q250.4 -65.9 239.2 -73.3Q233.2 -77.2 226.8 -77.2Q214.8 -77.2 206.8 -67.4V-18.9Q215.7 -9.6 226.4 -9.6Q242.3 -9.6 247.7 -26.1Q250.4 -34.4 250.4 -44.6ZM400.7 -0.4 399.8 0.7Q389 0 381.6 0Q374.8 0 361.7 0.7L360.7 -0.3Q362.5 -22.1 362.5 -33.9V-53Q362.5 -76.9 345.3 -76.9Q336.1 -76.9 331 -70.5Q326.9 -65.4 326.9 -57.4V-45.9Q326.9 -26.1 327.6 -13.4Q327.8 -9.6 329.7 -8.7Q332 -7.5 341.4 -7.2L342.4 -6.2V-0.3L341.5 0.7Q332.2 0 314.7 0Q297.2 0 288 0.7L287.1 -0.3V-6.2L288 -7.2Q297.4 -7.5 299.7 -8.7Q301.6 -9.6 301.8 -13.4Q302.5 -26.1 302.5 -57.8V-90.5Q302.5 -111 301.8 -123.7Q301.6 -127.3 299.7 -128.5Q297.7 -129.6 288.3 -129.9L287.4 -131V-136.3L288.3 -137.4Q307.2 -139.5 326.1 -145.5L328.2 -144.3Q328.2 -141.7 327.9 -134.7Q326.9 -111.3 326.9 -83V-77.5L344.1 -92Q350.5 -94.6 358.3 -94.6Q373.8 -94.6 381.5 -85.3Q387.8 -77.6 387.8 -62.9Q387.8 -61.2 387.4 -51Q387 -40.7 387 -32.3Q387 -17.6 387.5 -13.5Q387.9 -9.5 389.7 -8.4Q391.5 -7.3 399.9 -7.1L400.7 -6.2ZM498.3 -0.6 497.3 0.5Q489.1 0 478.4 0Q470.1 0 462.5 0.5L461.6 -0.6L462.5 -13.7L443.6 0.8Q441.3 2.4 437.1 2.8Q435.5 3 433.2 3Q422.4 3 416.6 -3.5Q410.8 -10.1 410.8 -21.6Q410.8 -36.8 420.4 -43.2Q430.9 -50.1 462.5 -55.7Q462.5 -71.2 454.3 -76.5Q449.3 -79.7 442.4 -79.7Q434.8 -79.7 430.4 -76.6L426.7 -67.5L425.4 -66.8L420.4 -68L419.7 -69.3L420.2 -80.9Q436.3 -92.8 444.4 -94.3Q447.9 -95 453.3 -95Q472.6 -95 480.8 -85Q486.7 -77.6 486.7 -62.5Q486.7 -58.8 486.4 -50.6Q485.9 -36.9 485.9 -32.3Q485.9 -17.6 486.4 -13.5Q486.9 -9.5 488.7 -8.4Q490.5 -7.3 497.4 -7.1L498.3 -6.1ZM462.5 -23.3V-47.4Q446.4 -43.8 440.8 -39.8Q435.2 -35.7 435.2 -27.4Q435.2 -14.2 446.8 -14.2Q456.6 -14.2 462.5 -23.3ZM454.7 -99.4ZM454.7 7.6ZM557.7 -38.3H505.7L504.3 -39.8Q505.8 -42.4 508.1 -49.9Q510.3 -57.4 510.8 -60.4H562.3L564.1 -58.4Q560.3 -52 557.7 -38.3ZM738.9 -0.5 737.9 0.6Q732.2 0 717.8 0Q705.8 0 700.7 0.6L699.3 -1.3Q700.9 -25.6 700.9 -36.7V-45.6Q700.9 -60 700 -64.8Q698.9 -70.7 695.1 -74.2Q691.3 -77.7 684.8 -77.7Q677.5 -77.7 672.6 -73.6Q667.7 -69.5 667.7 -63.2V-34.1L668.1 -18.7Q668.3 -12.4 669.2 -10.4Q669.7 -9.2 671.8 -8.6Q673.5 -8.1 681.3 -7.3L682.3 -6.3V-0.5L681.2 0.6Q669.3 0 657.2 0Q642.2 0 631.5 0.6L630.4 -0.5V-6.2L631.4 -7.4Q637.5 -8 639.9 -8.5Q641.6 -8.9 642.4 -11.4Q643 -13.3 643.1 -22.3L643.3 -53.8Q643.3 -64.7 641.6 -69.4Q640.2 -73.1 636.4 -75.6Q633 -77.8 627.5 -77.8Q618.7 -77.8 613.5 -72Q611 -69.2 610.6 -67.6Q610.2 -65.9 610.2 -60.3V-39.1Q610.2 -32.8 610.6 -22.9Q610.9 -12.6 611.3 -10.9Q611.9 -8.9 614.6 -8.2Q617.3 -7.4 622.8 -7.3L623.7 -6.3V-0.4L622.8 0.6Q614.5 0 598 0Q580.5 0 571.3 0.7L570.3 -0.3V-6.2L571.3 -7.2Q580.7 -7.5 582.9 -8.7Q584.9 -9.6 585.1 -13.4Q585.8 -26.1 585.8 -40.6V-54.6Q585.8 -74.1 584.3 -77.1Q583.3 -79 580.1 -79.5Q578.9 -79.7 571.6 -80L570.6 -81V-86.4L571.6 -87.5Q589.2 -89.2 608.6 -95.6L610.8 -94.3L610.6 -78.8L627.9 -92.9Q632.7 -95 639.3 -95Q650.5 -95 656.8 -91.4Q663 -87.7 666.8 -78.5L684.6 -92.9Q689.4 -95.1 696.2 -95.1Q715.1 -95.1 722.4 -81.4Q725.6 -75.4 725.6 -62.9Q725.6 -57.7 725.5 -55.2L725.4 -51.5Q725.2 -46.8 725.2 -45.2V-32.5Q725.2 -17.8 725.7 -13.7Q726.2 -9.7 727.9 -8.6Q729.7 -7.5 737.9 -7.3L738.9 -6.2ZM834.3 -54.8Q834.3 -53.1 834.2 -49.8L833.2 -48.4Q820.3 -44.9 799 -44.9Q795.2 -44.9 787.5 -44.8Q779.8 -44.6 775.8 -44.6Q776.4 -30.3 784.7 -20.9Q793.4 -10.8 807.4 -10.8Q816.8 -10.8 829.7 -17.3L832 -14.5L827.7 -4.8Q813.4 4.3 796.7 4.3Q774.8 4.3 762.6 -8.1Q750.5 -20.5 750.5 -43.5Q750.5 -70.7 763.4 -80.8Q781.4 -94.6 797.5 -94.6Q815 -94.6 824.6 -84.6Q834.3 -74.2 834.3 -54.8ZM808.9 -57.3Q808.9 -83.7 792.4 -83.7Q775.2 -83.7 775.2 -57.5V-55.4Q780.8 -54.5 795.3 -54.5Q802.8 -54.5 808.8 -55.4Q808.9 -56.7 808.9 -57.3ZM797 7.6ZM797 -99.4ZM904.4 -12.8Q903.7 -12 900.2 -8.7Q894.4 -3.2 890.3 1.3Q885.6 2.8 880.7 2.8Q867.1 2.8 860.9 -5.1Q858.2 -8.5 857.3 -13Q856.4 -18.4 856.5 -27.1L856.8 -50.4V-74.8H854.1L848.9 -74.6H844.9L843.9 -75.5V-78L844.6 -79.5Q846.4 -80.7 850.1 -83Q854.5 -85.7 856.8 -87.6V-100.9Q856.8 -109.2 856 -118.5Q863.3 -120.8 867.8 -122.6Q872.4 -124.4 880.7 -128.5L883.2 -126.6Q882 -114.5 881.6 -104.9L880.7 -88H883.9Q894.5 -88 902.3 -88.7L903.3 -87.6L902 -76.2L901 -75.2H880.7V-42.1Q880.7 -26.2 881.1 -23.3Q881.6 -19.2 884.5 -16.7Q887.5 -14.2 892.6 -14.2Q896.6 -14.2 902.3 -16.3ZM981.6 -94.3 980.9 -77Q980.8 -72.7 980.5 -67.2L976.4 -65.9Q971.8 -72.6 963.7 -72.6Q956.4 -72.6 951.6 -66.7Q948.7 -63.1 948.7 -56.1V-33.2Q948.7 -26.1 949.4 -13.4Q949.6 -9.8 951.4 -8.7Q953.3 -7.6 965 -7.2L966 -6.3V-0.4L965 0.6Q950.7 0 936.5 0Q919 0 909.8 0.7L908.9 -0.3V-6.2L909.8 -7.2Q919.2 -7.5 921.5 -8.7Q923.4 -9.6 923.6 -13.4Q924.3 -26.1 924.3 -40.6V-54.6Q924.3 -74.1 922.8 -77.1Q921.8 -79 918.6 -79.5Q917.4 -79.7 910.1 -80L909.1 -81V-86.4L910.1 -87.5Q927.7 -89.2 947.1 -95.6L949.3 -94.3L949.1 -75.2Q955.1 -82.2 963.7 -91.6Q967.7 -95.5 974.7 -95.5Q978.8 -95.5 981.6 -94.3ZM1027.4 -127.7Q1027.4 -121.5 1023 -117Q1018.6 -112.6 1012.4 -112.6Q1006.2 -112.6 1001.8 -117Q997.4 -121.5 997.4 -127.7Q997.4 -134.2 1001.8 -138.6Q1006.3 -143 1012.4 -143Q1018.5 -143 1022.9 -138.6Q1027.4 -134.2 1027.4 -127.7ZM1040.8 -0.3 1039.9 0.7Q1030.6 0 1013.1 0Q995.6 0 986.4 0.7L985.5 -0.3V-6.2L986.4 -7.2Q995.8 -7.5 998.1 -8.7Q1000 -9.6 1000.2 -13.4Q1000.9 -26.1 1000.9 -40.6V-54.6Q1000.9 -73.5 999.4 -77.1Q998.7 -79 995.2 -79.5Q994.1 -79.7 986.7 -80L985.8 -81V-86.4L986.7 -87.5Q1005.5 -89.2 1024.5 -95.6L1026.6 -94.3Q1025.3 -76.6 1025.3 -64.4V-33.2Q1025.3 -26.1 1026 -13.4Q1026.2 -9.6 1028.1 -8.7Q1030.4 -7.5 1039.8 -7.2L1040.8 -6.2ZM1013.1 7.6ZM1128.5 -12.3 1124.2 -2.6Q1110.9 4.3 1098 4.3Q1076.2 4.3 1064.7 -8.2Q1053.2 -20.7 1053.2 -42.5Q1053.2 -62.6 1062.1 -73Q1064.5 -76 1071.4 -80.8Q1085.4 -90.7 1090.2 -92.7Q1094.9 -94.6 1104.7 -94.6Q1117.9 -94.6 1126.6 -90.6L1127.6 -88.9Q1127.5 -87.6 1126.2 -79.8L1125.2 -73.1Q1124.9 -71.5 1124.3 -60.1L1123.3 -59.1H1117.5L1116.5 -60.1Q1115.9 -68.8 1115.1 -72.2Q1110.8 -79.8 1098.6 -79.8Q1077.9 -79.8 1077.9 -52.9Q1077.9 -33.4 1086.2 -22.2Q1094.7 -10.5 1110.1 -10.5Q1119.5 -10.5 1126.6 -14.6ZM1213.1 -30.7Q1213.1 -14.9 1201.2 -5.3Q1189.4 4.3 1170.2 4.3Q1156.7 4.3 1141.1 -1.6L1140.1 -3Q1140.9 -12 1141.1 -17L1141.6 -29.3L1142.6 -30.4H1148.4L1149.5 -29.3Q1149.9 -18.4 1150.4 -16.4Q1158.7 -5.8 1172.2 -5.8Q1180.8 -5.8 1186 -10Q1191.1 -14.2 1191.1 -21.2Q1191.1 -30.1 1183.3 -33Q1180 -34.3 1170.1 -36.3Q1154 -39.7 1148.6 -44.1Q1140.3 -50.8 1140.3 -63.8Q1140.3 -77.9 1150.5 -86.5Q1161.3 -95.5 1179.6 -95.5Q1195.2 -95.5 1205.6 -90.2L1206.5 -88.7Q1205.4 -84.3 1204.8 -66.1L1203.7 -65.1H1198.2L1197.1 -66.1Q1196.7 -73.1 1195.7 -77.5Q1189.6 -85.4 1177.9 -85.4Q1170.2 -85.4 1165.4 -81.6Q1160.5 -77.9 1160.5 -71.9Q1160.5 -63.8 1168.8 -61Q1172.5 -59.9 1183.2 -57.7Q1199.6 -54.5 1204.9 -50.3Q1213.1 -43.8 1213.1 -30.7ZM1242.9 -27.9Q1249.2 -27.9 1253.7 -23.5Q1258.2 -19 1258.2 -12.4Q1258.2 -6 1253.7 -1.5Q1249.2 3 1242.9 3Q1236.7 3 1232.2 -1.5Q1227.6 -6.1 1227.6 -12.4Q1227.6 -18.8 1232.1 -23.4Q1236.6 -27.9 1242.9 -27.9ZM1361.4 -0.6 1360.3 0.5Q1352.1 0 1341.4 0Q1333.1 0 1325.5 0.5L1324.6 -0.6L1325.5 -13.7L1306.6 0.8Q1304.3 2.4 1300.1 2.8Q1298.5 3 1296.2 3Q1285.4 3 1279.6 -3.5Q1273.8 -10.1 1273.8 -21.6Q1273.8 -36.8 1283.4 -43.2Q1293.9 -50.1 1325.5 -55.7Q1325.5 -71.2 1317.3 -76.5Q1312.3 -79.7 1305.4 -79.7Q1297.8 -79.7 1293.4 -76.6L1289.7 -67.5L1288.4 -66.8L1283.4 -68L1282.7 -69.3L1283.2 -80.9Q1299.3 -92.8 1307.4 -94.3Q1310.9 -95 1316.3 -95Q1335.6 -95 1343.8 -85Q1349.7 -77.6 1349.7 -62.5Q1349.7 -58.8 1349.4 -50.6Q1349 -36.9 1349 -32.3Q1349 -17.6 1349.4 -13.5Q1349.9 -9.5 1351.7 -8.4Q1353.5 -7.3 1360.4 -7.1L1361.4 -6.1ZM1325.5 -23.3V-47.4Q1309.4 -43.8 1303.8 -39.8Q1298.2 -35.7 1298.2 -27.4Q1298.2 -14.2 1309.8 -14.2Q1319.7 -14.2 1325.5 -23.3ZM1317.7 -99.4ZM1317.7 7.6ZM1411.5 -127.7Q1411.5 -121.5 1407.1 -117Q1402.7 -112.6 1396.6 -112.6Q1390.3 -112.6 1385.9 -117Q1381.5 -121.5 1381.5 -127.7Q1381.5 -134.2 1386 -138.6Q1390.4 -143 1396.6 -143Q1402.6 -143 1407.1 -138.6Q1411.5 -134.2 1411.5 -127.7ZM1425 -0.3 1424 0.7Q1414.7 0 1397.2 0Q1379.8 0 1370.6 0.7L1369.6 -0.3V-6.2L1370.6 -7.2Q1380 -7.5 1382.2 -8.7Q1384.2 -9.6 1384.4 -13.4Q1385 -26.1 1385 -40.6V-54.6Q1385 -73.5 1383.6 -77.1Q1382.8 -79 1379.4 -79.5Q1378.2 -79.7 1370.9 -80L1369.9 -81V-86.4L1370.9 -87.5Q1389.6 -89.2 1408.7 -95.6L1410.7 -94.3Q1409.5 -76.6 1409.5 -64.4V-33.2Q1409.5 -26.1 1410.1 -13.4Q1410.3 -9.6 1412.3 -8.7Q1414.5 -7.5 1423.9 -7.2L1425 -6.2ZM1397.2 7.6Z"/></svg>
+<svg class="logo-dark" xmlns="http://www.w3.org/2000/svg" viewBox="-230.2 -155 1657.2 210.1" role="img" aria-label="alpha-metrics.ai"><g transform="translate(-228.2 -153) scale(2.96875)"><rect width="64" height="64" rx="14" fill="#9cc3f3"/><path transform="translate(32 32) scale(.86) translate(-31 -32)" d="M50 15C45 33 35 49 24 49C15 49 9 41 9 32C9 23 15 15 24 15C35 15 45 31 53 49" fill="none" stroke="#0b1522" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/></g><path fill="#9cc3f3" d="M95.4 -0.6 94.3 0.5Q86.1 0 75.5 0Q67.2 0 59.6 0.5L58.7 -0.6L59.6 -13.7L40.6 0.8Q38.4 2.4 34.2 2.8Q32.5 3 30.3 3Q19.4 3 13.6 -3.5Q7.8 -10.1 7.8 -21.6Q7.8 -36.8 17.5 -43.2Q27.9 -50.1 59.6 -55.7Q59.6 -71.2 51.4 -76.5Q46.4 -79.7 39.5 -79.7Q31.8 -79.7 27.4 -76.6L23.7 -67.5L22.5 -66.8L17.5 -68L16.8 -69.3L17.3 -80.9Q33.4 -92.8 41.5 -94.3Q44.9 -95 50.4 -95Q69.6 -95 77.8 -85Q83.8 -77.6 83.8 -62.5Q83.8 -58.8 83.5 -50.6Q83 -36.9 83 -32.3Q83 -17.6 83.5 -13.5Q84 -9.5 85.8 -8.4Q87.6 -7.3 94.4 -7.1L95.4 -6.1ZM59.6 -23.3V-47.4Q43.5 -43.8 37.8 -39.8Q32.2 -35.7 32.2 -27.4Q32.2 -14.2 43.8 -14.2Q53.7 -14.2 59.6 -23.3ZM51.8 -99.4ZM51.8 7.6ZM159 -0.3 158.1 0.7Q148.8 0 131.3 0Q113.8 0 104.6 0.7L103.7 -0.3V-6.2L104.6 -7.2Q114 -7.5 116.3 -8.7Q118.2 -9.6 118.4 -13.4Q119.1 -26.1 119.1 -57.8V-90.5Q119.1 -111 118.4 -123.7Q118.2 -127.3 116.3 -128.5Q114.3 -129.6 104.9 -129.9L104 -131V-136.3L104.9 -137.4Q123.8 -139.5 142.7 -145.5L144.8 -144.3Q144.8 -141.7 144.5 -134.7Q143.5 -111.3 143.5 -83V-57.8Q143.5 -26.1 144.2 -13.4Q144.4 -9.6 146.3 -8.7Q148.6 -7.5 158 -7.2L159 -6.2ZM275.5 -56.6Q275.5 -44.6 271.2 -33.7Q268.1 -25.7 263 -20.1Q260.7 -17.7 254.6 -13.1Q248.1 -7.9 238.5 -0.6Q232.7 3.2 223.8 3.2Q215.3 3.2 206.8 0.1V36.7Q206.8 41.2 207.9 42.7Q208.5 43.5 210.6 43.9Q212.1 44.3 223.1 45.1L224.1 46.1V52.1L223.1 53.1Q210 52.3 193.2 52.3Q180.9 52.3 168.6 53.1L167.6 52.1V46.3L168.6 45.2Q178.4 44.9 179.9 43.7Q180.9 42.8 181.1 41.8Q181.4 39.9 181.8 32.2Q182.1 26.4 182.2 17.3L182.4 2.1V-54.6Q182.4 -55.6 181.8 -69Q181.5 -75.4 180.8 -77.2Q180.1 -79 176.8 -79.5Q175.6 -79.7 168.2 -80L167.2 -81V-86.4L168.2 -87.5Q186.8 -89.2 206 -95.6L208.1 -94.3Q208.1 -90.1 207.2 -77.4Q213.8 -82.9 223.7 -91Q228.5 -94.6 238.5 -94.6Q262.7 -94.6 271.5 -76.1Q275.5 -67.6 275.5 -56.6ZM250.4 -44.6Q250.4 -65.9 239.2 -73.3Q233.2 -77.2 226.8 -77.2Q214.8 -77.2 206.8 -67.4V-18.9Q215.7 -9.6 226.4 -9.6Q242.3 -9.6 247.7 -26.1Q250.4 -34.4 250.4 -44.6ZM400.7 -0.4 399.8 0.7Q389 0 381.6 0Q374.8 0 361.7 0.7L360.7 -0.3Q362.5 -22.1 362.5 -33.9V-53Q362.5 -76.9 345.3 -76.9Q336.1 -76.9 331 -70.5Q326.9 -65.4 326.9 -57.4V-45.9Q326.9 -26.1 327.6 -13.4Q327.8 -9.6 329.7 -8.7Q332 -7.5 341.4 -7.2L342.4 -6.2V-0.3L341.5 0.7Q332.2 0 314.7 0Q297.2 0 288 0.7L287.1 -0.3V-6.2L288 -7.2Q297.4 -7.5 299.7 -8.7Q301.6 -9.6 301.8 -13.4Q302.5 -26.1 302.5 -57.8V-90.5Q302.5 -111 301.8 -123.7Q301.6 -127.3 299.7 -128.5Q297.7 -129.6 288.3 -129.9L287.4 -131V-136.3L288.3 -137.4Q307.2 -139.5 326.1 -145.5L328.2 -144.3Q328.2 -141.7 327.9 -134.7Q326.9 -111.3 326.9 -83V-77.5L344.1 -92Q350.5 -94.6 358.3 -94.6Q373.8 -94.6 381.5 -85.3Q387.8 -77.6 387.8 -62.9Q387.8 -61.2 387.4 -51Q387 -40.7 387 -32.3Q387 -17.6 387.5 -13.5Q387.9 -9.5 389.7 -8.4Q391.5 -7.3 399.9 -7.1L400.7 -6.2ZM498.3 -0.6 497.3 0.5Q489.1 0 478.4 0Q470.1 0 462.5 0.5L461.6 -0.6L462.5 -13.7L443.6 0.8Q441.3 2.4 437.1 2.8Q435.5 3 433.2 3Q422.4 3 416.6 -3.5Q410.8 -10.1 410.8 -21.6Q410.8 -36.8 420.4 -43.2Q430.9 -50.1 462.5 -55.7Q462.5 -71.2 454.3 -76.5Q449.3 -79.7 442.4 -79.7Q434.8 -79.7 430.4 -76.6L426.7 -67.5L425.4 -66.8L420.4 -68L419.7 -69.3L420.2 -80.9Q436.3 -92.8 444.4 -94.3Q447.9 -95 453.3 -95Q472.6 -95 480.8 -85Q486.7 -77.6 486.7 -62.5Q486.7 -58.8 486.4 -50.6Q485.9 -36.9 485.9 -32.3Q485.9 -17.6 486.4 -13.5Q486.9 -9.5 488.7 -8.4Q490.5 -7.3 497.4 -7.1L498.3 -6.1ZM462.5 -23.3V-47.4Q446.4 -43.8 440.8 -39.8Q435.2 -35.7 435.2 -27.4Q435.2 -14.2 446.8 -14.2Q456.6 -14.2 462.5 -23.3ZM454.7 -99.4ZM454.7 7.6ZM557.7 -38.3H505.7L504.3 -39.8Q505.8 -42.4 508.1 -49.9Q510.3 -57.4 510.8 -60.4H562.3L564.1 -58.4Q560.3 -52 557.7 -38.3ZM738.9 -0.5 737.9 0.6Q732.2 0 717.8 0Q705.8 0 700.7 0.6L699.3 -1.3Q700.9 -25.6 700.9 -36.7V-45.6Q700.9 -60 700 -64.8Q698.9 -70.7 695.1 -74.2Q691.3 -77.7 684.8 -77.7Q677.5 -77.7 672.6 -73.6Q667.7 -69.5 667.7 -63.2V-34.1L668.1 -18.7Q668.3 -12.4 669.2 -10.4Q669.7 -9.2 671.8 -8.6Q673.5 -8.1 681.3 -7.3L682.3 -6.3V-0.5L681.2 0.6Q669.3 0 657.2 0Q642.2 0 631.5 0.6L630.4 -0.5V-6.2L631.4 -7.4Q637.5 -8 639.9 -8.5Q641.6 -8.9 642.4 -11.4Q643 -13.3 643.1 -22.3L643.3 -53.8Q643.3 -64.7 641.6 -69.4Q640.2 -73.1 636.4 -75.6Q633 -77.8 627.5 -77.8Q618.7 -77.8 613.5 -72Q611 -69.2 610.6 -67.6Q610.2 -65.9 610.2 -60.3V-39.1Q610.2 -32.8 610.6 -22.9Q610.9 -12.6 611.3 -10.9Q611.9 -8.9 614.6 -8.2Q617.3 -7.4 622.8 -7.3L623.7 -6.3V-0.4L622.8 0.6Q614.5 0 598 0Q580.5 0 571.3 0.7L570.3 -0.3V-6.2L571.3 -7.2Q580.7 -7.5 582.9 -8.7Q584.9 -9.6 585.1 -13.4Q585.8 -26.1 585.8 -40.6V-54.6Q585.8 -74.1 584.3 -77.1Q583.3 -79 580.1 -79.5Q578.9 -79.7 571.6 -80L570.6 -81V-86.4L571.6 -87.5Q589.2 -89.2 608.6 -95.6L610.8 -94.3L610.6 -78.8L627.9 -92.9Q632.7 -95 639.3 -95Q650.5 -95 656.8 -91.4Q663 -87.7 666.8 -78.5L684.6 -92.9Q689.4 -95.1 696.2 -95.1Q715.1 -95.1 722.4 -81.4Q725.6 -75.4 725.6 -62.9Q725.6 -57.7 725.5 -55.2L725.4 -51.5Q725.2 -46.8 725.2 -45.2V-32.5Q725.2 -17.8 725.7 -13.7Q726.2 -9.7 727.9 -8.6Q729.7 -7.5 737.9 -7.3L738.9 -6.2ZM834.3 -54.8Q834.3 -53.1 834.2 -49.8L833.2 -48.4Q820.3 -44.9 799 -44.9Q795.2 -44.9 787.5 -44.8Q779.8 -44.6 775.8 -44.6Q776.4 -30.3 784.7 -20.9Q793.4 -10.8 807.4 -10.8Q816.8 -10.8 829.7 -17.3L832 -14.5L827.7 -4.8Q813.4 4.3 796.7 4.3Q774.8 4.3 762.6 -8.1Q750.5 -20.5 750.5 -43.5Q750.5 -70.7 763.4 -80.8Q781.4 -94.6 797.5 -94.6Q815 -94.6 824.6 -84.6Q834.3 -74.2 834.3 -54.8ZM808.9 -57.3Q808.9 -83.7 792.4 -83.7Q775.2 -83.7 775.2 -57.5V-55.4Q780.8 -54.5 795.3 -54.5Q802.8 -54.5 808.8 -55.4Q808.9 -56.7 808.9 -57.3ZM797 7.6ZM797 -99.4ZM904.4 -12.8Q903.7 -12 900.2 -8.7Q894.4 -3.2 890.3 1.3Q885.6 2.8 880.7 2.8Q867.1 2.8 860.9 -5.1Q858.2 -8.5 857.3 -13Q856.4 -18.4 856.5 -27.1L856.8 -50.4V-74.8H854.1L848.9 -74.6H844.9L843.9 -75.5V-78L844.6 -79.5Q846.4 -80.7 850.1 -83Q854.5 -85.7 856.8 -87.6V-100.9Q856.8 -109.2 856 -118.5Q863.3 -120.8 867.8 -122.6Q872.4 -124.4 880.7 -128.5L883.2 -126.6Q882 -114.5 881.6 -104.9L880.7 -88H883.9Q894.5 -88 902.3 -88.7L903.3 -87.6L902 -76.2L901 -75.2H880.7V-42.1Q880.7 -26.2 881.1 -23.3Q881.6 -19.2 884.5 -16.7Q887.5 -14.2 892.6 -14.2Q896.6 -14.2 902.3 -16.3ZM981.6 -94.3 980.9 -77Q980.8 -72.7 980.5 -67.2L976.4 -65.9Q971.8 -72.6 963.7 -72.6Q956.4 -72.6 951.6 -66.7Q948.7 -63.1 948.7 -56.1V-33.2Q948.7 -26.1 949.4 -13.4Q949.6 -9.8 951.4 -8.7Q953.3 -7.6 965 -7.2L966 -6.3V-0.4L965 0.6Q950.7 0 936.5 0Q919 0 909.8 0.7L908.9 -0.3V-6.2L909.8 -7.2Q919.2 -7.5 921.5 -8.7Q923.4 -9.6 923.6 -13.4Q924.3 -26.1 924.3 -40.6V-54.6Q924.3 -74.1 922.8 -77.1Q921.8 -79 918.6 -79.5Q917.4 -79.7 910.1 -80L909.1 -81V-86.4L910.1 -87.5Q927.7 -89.2 947.1 -95.6L949.3 -94.3L949.1 -75.2Q955.1 -82.2 963.7 -91.6Q967.7 -95.5 974.7 -95.5Q978.8 -95.5 981.6 -94.3ZM1027.4 -127.7Q1027.4 -121.5 1023 -117Q1018.6 -112.6 1012.4 -112.6Q1006.2 -112.6 1001.8 -117Q997.4 -121.5 997.4 -127.7Q997.4 -134.2 1001.8 -138.6Q1006.3 -143 1012.4 -143Q1018.5 -143 1022.9 -138.6Q1027.4 -134.2 1027.4 -127.7ZM1040.8 -0.3 1039.9 0.7Q1030.6 0 1013.1 0Q995.6 0 986.4 0.7L985.5 -0.3V-6.2L986.4 -7.2Q995.8 -7.5 998.1 -8.7Q1000 -9.6 1000.2 -13.4Q1000.9 -26.1 1000.9 -40.6V-54.6Q1000.9 -73.5 999.4 -77.1Q998.7 -79 995.2 -79.5Q994.1 -79.7 986.7 -80L985.8 -81V-86.4L986.7 -87.5Q1005.5 -89.2 1024.5 -95.6L1026.6 -94.3Q1025.3 -76.6 1025.3 -64.4V-33.2Q1025.3 -26.1 1026 -13.4Q1026.2 -9.6 1028.1 -8.7Q1030.4 -7.5 1039.8 -7.2L1040.8 -6.2ZM1013.1 7.6ZM1128.5 -12.3 1124.2 -2.6Q1110.9 4.3 1098 4.3Q1076.2 4.3 1064.7 -8.2Q1053.2 -20.7 1053.2 -42.5Q1053.2 -62.6 1062.1 -73Q1064.5 -76 1071.4 -80.8Q1085.4 -90.7 1090.2 -92.7Q1094.9 -94.6 1104.7 -94.6Q1117.9 -94.6 1126.6 -90.6L1127.6 -88.9Q1127.5 -87.6 1126.2 -79.8L1125.2 -73.1Q1124.9 -71.5 1124.3 -60.1L1123.3 -59.1H1117.5L1116.5 -60.1Q1115.9 -68.8 1115.1 -72.2Q1110.8 -79.8 1098.6 -79.8Q1077.9 -79.8 1077.9 -52.9Q1077.9 -33.4 1086.2 -22.2Q1094.7 -10.5 1110.1 -10.5Q1119.5 -10.5 1126.6 -14.6ZM1213.1 -30.7Q1213.1 -14.9 1201.2 -5.3Q1189.4 4.3 1170.2 4.3Q1156.7 4.3 1141.1 -1.6L1140.1 -3Q1140.9 -12 1141.1 -17L1141.6 -29.3L1142.6 -30.4H1148.4L1149.5 -29.3Q1149.9 -18.4 1150.4 -16.4Q1158.7 -5.8 1172.2 -5.8Q1180.8 -5.8 1186 -10Q1191.1 -14.2 1191.1 -21.2Q1191.1 -30.1 1183.3 -33Q1180 -34.3 1170.1 -36.3Q1154 -39.7 1148.6 -44.1Q1140.3 -50.8 1140.3 -63.8Q1140.3 -77.9 1150.5 -86.5Q1161.3 -95.5 1179.6 -95.5Q1195.2 -95.5 1205.6 -90.2L1206.5 -88.7Q1205.4 -84.3 1204.8 -66.1L1203.7 -65.1H1198.2L1197.1 -66.1Q1196.7 -73.1 1195.7 -77.5Q1189.6 -85.4 1177.9 -85.4Q1170.2 -85.4 1165.4 -81.6Q1160.5 -77.9 1160.5 -71.9Q1160.5 -63.8 1168.8 -61Q1172.5 -59.9 1183.2 -57.7Q1199.6 -54.5 1204.9 -50.3Q1213.1 -43.8 1213.1 -30.7ZM1242.9 -27.9Q1249.2 -27.9 1253.7 -23.5Q1258.2 -19 1258.2 -12.4Q1258.2 -6 1253.7 -1.5Q1249.2 3 1242.9 3Q1236.7 3 1232.2 -1.5Q1227.6 -6.1 1227.6 -12.4Q1227.6 -18.8 1232.1 -23.4Q1236.6 -27.9 1242.9 -27.9ZM1361.4 -0.6 1360.3 0.5Q1352.1 0 1341.4 0Q1333.1 0 1325.5 0.5L1324.6 -0.6L1325.5 -13.7L1306.6 0.8Q1304.3 2.4 1300.1 2.8Q1298.5 3 1296.2 3Q1285.4 3 1279.6 -3.5Q1273.8 -10.1 1273.8 -21.6Q1273.8 -36.8 1283.4 -43.2Q1293.9 -50.1 1325.5 -55.7Q1325.5 -71.2 1317.3 -76.5Q1312.3 -79.7 1305.4 -79.7Q1297.8 -79.7 1293.4 -76.6L1289.7 -67.5L1288.4 -66.8L1283.4 -68L1282.7 -69.3L1283.2 -80.9Q1299.3 -92.8 1307.4 -94.3Q1310.9 -95 1316.3 -95Q1335.6 -95 1343.8 -85Q1349.7 -77.6 1349.7 -62.5Q1349.7 -58.8 1349.4 -50.6Q1349 -36.9 1349 -32.3Q1349 -17.6 1349.4 -13.5Q1349.9 -9.5 1351.7 -8.4Q1353.5 -7.3 1360.4 -7.1L1361.4 -6.1ZM1325.5 -23.3V-47.4Q1309.4 -43.8 1303.8 -39.8Q1298.2 -35.7 1298.2 -27.4Q1298.2 -14.2 1309.8 -14.2Q1319.7 -14.2 1325.5 -23.3ZM1317.7 -99.4ZM1317.7 7.6ZM1411.5 -127.7Q1411.5 -121.5 1407.1 -117Q1402.7 -112.6 1396.6 -112.6Q1390.3 -112.6 1385.9 -117Q1381.5 -121.5 1381.5 -127.7Q1381.5 -134.2 1386 -138.6Q1390.4 -143 1396.6 -143Q1402.6 -143 1407.1 -138.6Q1411.5 -134.2 1411.5 -127.7ZM1425 -0.3 1424 0.7Q1414.7 0 1397.2 0Q1379.8 0 1370.6 0.7L1369.6 -0.3V-6.2L1370.6 -7.2Q1380 -7.5 1382.2 -8.7Q1384.2 -9.6 1384.4 -13.4Q1385 -26.1 1385 -40.6V-54.6Q1385 -73.5 1383.6 -77.1Q1382.8 -79 1379.4 -79.5Q1378.2 -79.7 1370.9 -80L1369.9 -81V-86.4L1370.9 -87.5Q1389.6 -89.2 1408.7 -95.6L1410.7 -94.3Q1409.5 -76.6 1409.5 -64.4V-33.2Q1409.5 -26.1 1410.1 -13.4Q1410.3 -9.6 1412.3 -8.7Q1414.5 -7.5 1423.9 -7.2L1425 -6.2ZM1397.2 7.6Z"/></svg>
+<span class="kicker tag">Case study</span></div></header>
+<main class="wrap">
+<div class="hero">
+ <div class="kicker">Market screening · composite indicator</div>
  <h1>Which Latin American market should a European premium coffee brand enter first?</h1>
- <p class="lede">Six markets, 45 public indicators across six PESTEL dimensions, one weighted score. Change the weights or the normalisation and the ranking recalculates from the raw data.</p>
- <div class="verdict" id="verdict" aria-live="polite"></div>
-</header>
+ <p class="lede">We ranked six markets on 45 public indicators across the six PESTEL dimensions. Change the weights or the normalisation below and the ranking is recalculated from the raw data.</p>
+ <div class="pills" id="verdict" aria-live="polite"></div>
+</div>
 
 <section aria-labelledby="h-method">
- <h2 id="h-method">How the score is built</h2>
+ <h2 id="h-method">One weighted score, built in five steps</h2>
  <div class="steps">
-  <div class="step"><span class="n">Step 1</span><h3>Collect</h3><p>45 indicators per country (5 political, 10 economic, 10 social, 10 technological, 5 environmental, 5 legal), latest year, one public source each.</p></div>
-  <div class="step"><span class="n">Step 2</span><h3>Normalise</h3><p>Min-max: <code>100·(x−min)/(max−min)</code>, reversed where lower is better. Check with T-scores: <code>50+10·z</code>.</p></div>
-  <div class="step"><span class="n">Step 3</span><h3>Weight</h3><p>Weights per dimension, fixed before data collection and split equally among its indicators.</p></div>
-  <div class="step"><span class="n">Step 4</span><h3>Aggregate</h3><p>Score = <code>Σ weight × dimension mean</code>. A weighted sum, so strengths offset weaknesses.</p></div>
-  <div class="step"><span class="n">Step 5</span><h3>Stress-test</h3><p>Re-rank under four alternative weight sets and with T-scores. A stable rank is a robust result.</p></div>
+  <div class="step"><span class="n">Step 1</span><h3>Collect</h3><p>45 indicators per country: 5 political, 10 economic, 10 social, 10 technological, 5 environmental, 5 legal. Latest year, one public source each.</p></div>
+  <div class="step"><span class="n">Step 2</span><h3>Normalise</h3><p>Min-max: <code>100·(x−min)/(max−min)</code>, reversed where lower is better. Checked against T-scores: <code>50+10·z</code>.</p></div>
+  <div class="step"><span class="n">Step 3</span><h3>Weight</h3><p>One weight per dimension, fixed before the data were collected and split equally among its indicators.</p></div>
+  <div class="step"><span class="n">Step 4</span><h3>Aggregate</h3><p>Score = <code>Σ weight × dimension mean</code>. A weighted sum, so a strength can offset a weakness.</p></div>
+  <div class="step"><span class="n">Step 5</span><h3>Stress-test</h3><p>Re-rank under four alternative weight sets and with T-scores. A rank that holds is a result you can decide on.</p></div>
  </div>
 </section>
 
 <section aria-labelledby="h-model">
  <h2 id="h-model">Live model</h2>
- <div class="panel controls">
+ <div class="controls">
   <div class="row"><span class="lbl">Weight set</span><span id="presets" class="row"></span></div>
   <div class="sliders" id="sliders"></div>
   <div class="row"><span class="lbl">Normalisation</span>
-   <button class="seg" id="m-mm" aria-pressed="true">Min-max 0–100</button>
-   <button class="seg" id="m-t" aria-pressed="false">T-score (50 = average)</button>
+   <button class="seg" id="m-mm" aria-pressed="true">Min-max, 0–100</button>
+   <button class="seg" id="m-t" aria-pressed="false">T-score, 50 = average</button>
   </div>
  </div>
- <div class="panel" style="display:grid;gap:12px">
-  <div style="display:grid;gap:4px"><strong>Weighted score by country</strong><span class="note" id="sumnote"></span></div>
-  <div class="legend" id="legend"></div>
-  <div class="chart" id="bars"></div>
-  <details><summary>Show as table</summary><div class="tw"><table id="bartable"></table></div></details>
+ <div class="split">
+  <figure class="card" style="margin:0">
+   <div><div class="ctitle" id="t-bars"></div><div class="csub" id="s-bars"></div></div>
+   <div class="chart" id="bars"></div>
+   <details><summary>Show as table</summary><div class="tw"><table id="bartable"></table></div></details>
+   <figcaption>Base: six markets, 45 indicators each. Select a bar to see that country’s breakdown.</figcaption>
+  </figure>
+  <figure class="card" style="margin:0">
+   <div><div class="ctitle" id="t-drv"></div><div class="csub" id="s-drv"></div></div>
+   <div class="chart" id="drivers"></div>
+   <figcaption id="c-drv"></figcaption>
+  </figure>
  </div>
 </section>
 
 <section aria-labelledby="h-rob">
- <h2 id="h-rob">How stable is the ranking?</h2>
- <p class="note">Rank of each country under the five fixed weight sets and your current weights, with the current normalisation. A narrow rank range means the result does not depend on one choice of weights.</p>
- <div class="panel tw"><table id="rob"></table></div>
+ <h2 id="h-rob"></h2>
+ <p class="note">Rank of each country under the five fixed weight sets, and under your weights if you changed them, with the current normalisation. A narrow range means the result does not depend on one choice of weights.</p>
+ <div class="card tw"><table id="rob"></table></div>
 </section>
 
 <section aria-labelledby="h-ind">
- <h2 id="h-ind">The 45 indicators</h2>
- <p class="note">Normalised score per indicator and country (darker = better within the six). Select an indicator to see its raw values and where min-max and T-scores disagree.</p>
- <div class="two">
-  <div class="panel tw"><table class="hm" id="hm"></table></div>
-  <div class="panel detail" id="detail"></div>
+ <h2 id="h-ind">The 45 indicators behind the score</h2>
+ <p class="note">Normalised score per indicator and country; darker blue is better within the six. Select an indicator to see its raw values and where min-max and T-scores disagree.</p>
+ <div class="split">
+  <div class="card tw"><table class="hm" id="hm"></table></div>
+  <div class="card" id="detail" style="align-content:start"></div>
  </div>
 </section>
 
 <section aria-labelledby="h-use">
- <h2 id="h-use">Using the method elsewhere</h2>
- <div class="panel" style="display:grid;gap:10px">
-  <p>The model is generic: any market screening that compares a fixed set of countries on many indicators can reuse it. Swap the indicators, set the weights before looking at the data, and report the rank range rather than a single rank.</p>
-  <p><strong>Known limits.</strong> With six countries, min-max stretches small gaps and one outlier (Mexico's tourist arrivals, Brazil's coffee market) can squeeze the others towards zero. A weighted sum lets a large market offset weak institutions; knock-out conditions such as a prohibitive tariff need a separate filter. Some indicators are proxies, and data years range from 2015 to 2026.</p>
+ <h2 id="h-use">What the method can and cannot carry</h2>
+ <div class="card">
+  <p>The model works for any screening that compares a fixed set of markets on many indicators. Swap the indicators, set the weights before you look at the data, and report the rank range rather than a single rank.</p>
+  <p><strong>Limits.</strong> With six countries, min-max stretches small gaps, and one outlier (Mexico’s tourist arrivals, Brazil’s coffee market) can push the others towards zero. A weighted sum lets a large market offset weak institutions, so knock-out conditions such as a prohibitive tariff need a separate filter. Some indicators are proxies, and data years range from 2015 to 2026.</p>
  </div>
 </section>
-
-<footer class="foot">
- <p>Data: values collected from public sources (World Bank WDI, WGI and LPI, UN agencies, OECD, Transparency International, WIPO, Yale EPI, ND-GAIN, EU Access2Markets, Euromonitor and Statista via a university library, among others) by student groups in the course International Business Projects, WU Vienna, winter term 2026/27, status November 2026. Weights and alternative weight sets as fixed by the course instructor.</p>
- <p>Scores compare the six markets with each other; they are not forecasts.</p>
-</footer>
-</div>
+</main>
+<footer class="am-footer"><div class="wrap">
+ <p>Data: public sources (World Bank WDI, WGI and LPI, UN agencies, OECD, Transparency International, WIPO, Yale EPI, ND-GAIN, EU Access2Markets, Euromonitor and Statista via a university library, among others), collected by student groups in the course International Business Projects, WU Vienna, winter term 2026/27. Status November 2026. Scores compare the six markets with each other; they are not forecasts.</p>
+ <p>alpha-metrics.ai · Market research, Vienna · info@alpha-metrics.ai</p>
+</div></footer>
 <div class="tip" id="tip" hidden></div>
+
 <script>
 const D=[["PO01","Political stability and absence of violence (WGI) [Score 0-100]","H",[68.4,58.87,68.6,48.911,54.95,88.39]],["PO02","Government effectiveness (WGI) [Score 0-100]","H",[58,51.61,73.68,50.431,48.65,70]],["PO03","Corruption Perceptions Index [Score 0-100]","H",[36,35,63,37,27,73]],["PO04","OECD country risk classification [Category 0-7]","L",[7,4,0,4,3,3]],["PO05","Global Peace Index [Score 1-5]","L",[1.922,2.33,1.826,2.74,2.65,1.75]],["EC01","GDP per capita, PPP [Int. $]","H",[32587,23433.3,37774.1,22640.42,25868.5,38314.9]],["EC02","Inflation, consumer prices [Annual %]","L",[31.5,5,4.2,5.14,3.8,4.7]],["EC03","Real GDP growth [Annual %]","H",[4.4,2.3,2.5,2.64,0.6,1.8]],["EC04","GDP, current US$ [US$ bn]","H",[683.1,2279.92,357.371,457.41,1830,85.348]],["EC05","Exchange-rate change against US$ [Annual %]","L",[35.7,3.7,0.82,-0.52,19.24,2.44]],["EC06","Trade openness [% of GDP]","H",[30.4,35,65,35.37,80,49.72]],["EC07","Unemployment rate [% of labour force]","L",[7.1,6,9,8.29,2.7,7.52]],["EC08","FDI, net inflows [% of GDP]","H",[0.6,3.4,4.1,2.53,2.4,2.28]],["EC09","Imports of roasted coffee, HS 0901.21 [US$ thousand]","H",[50211.05,87663.46,71800.26,3371.19,72143.39,7541.53]],["EC10","Coffee market size, retail value [US$ m]","H",[960.1,13041.5,654.2,1057.03,3126.35,152.7]],["SO01","Coffee consumption per capita [kg/person/year]","H",[2.51,5.03,1.41,1.44,0.83,2.45]],["SO02","Out-of-home coffee consumption [kg/person/year]","H",[0.1,0.82,0.07,0.23,0.05,0.19]],["SO03","Urban population [% of population]","H",[92.4,88,89.2,78.78,80.04,96]],["SO04","Population in cities above 1 million [% of population]","H",[44.2,44,35.2,44.54,42.66,53]],["SO05","International tourist arrivals [arrivals/year]","H",[7399000,6353000,5431000,4531000,97406000,3480000]],["SO06","Share of tourist arrivals from Europe [% of arrivals]","H",[13,22.2,7.34,15,8.72,5.52]],["SO07","European-born residents [% of population]","H",[0.32,0.1312,0.26,0.07,0.05,1.28]],["SO08","Human Development Index [Index 0-1]","H",[0.865,0.786,0.878,0.788,0.789,0.862]],["SO09","Cultural distance from Austria, Hofstede [mean abs. difference]","L",[21.17,21.83,30.83,31.67,31.17,30.67]],["SO10","Gini index [Index 0-100]","L",[42.4,50.3,43,54.4,42.6,40]],["TE01","Individuals using the Internet [% of population]","H",[89.7,84,96,79.35,83.12,92]],["TE02","Fixed broadband subscriptions [per 100 people]","H",[26.1,24.08,23.73,17.22,21.74,33.04]],["TE03","Mobile cellular subscriptions [per 100 people]","H",[140.23,102,133,174.09,116.49,146]],["TE04","4G mobile network coverage [% of population]","H",[97.68,93.3,96,100,97.8,93.9]],["TE05","Secure Internet servers [per 1 million people]","H",[5453,6941,11913,1126.21,531.66,4641]],["TE06","Account ownership [% of adults 15+]","H",[81.74,86.38,85.07,57.06,53.03,73.75]],["TE07","Logistics Performance Index, overall [Score 1-5]","H",[2.8,3.2,3,2.9,2.9,3]],["TE08","Container port traffic [TEU]","H",[1471434,13893906,4474125,5188127,9284170,1115000]],["TE09","Liner Shipping Connectivity Index [Q1 2023 = 100]","H",[110.93,165.08,107.75,211.24,201.12,96.41]],["TE10","Global Innovation Index [Score 0-100]","H",[26.8,32.9,33.1,28.5,30.5,28.8]],["EN01","ND-GAIN Country Index [Score 0-100]","H",[49.6,50.7,60.1,50.5,47.6,52]],["EN02","Renewable energy consumption [% of final energy]","H",[9.2,50.2,24.2,29.7,13,57.8]],["EN03","Environmental Performance Index [Score 0-100]","H",[46.06,48.27,50.95,48.83,46.09,36.91]],["EN04","Water stress [% of freshwater withdrawn]","L",[10,1.4,8.98,3.63,44.95,12.05]],["EN05","Forest area [% of land area]","H",[17.1,58.2,24.5,53.71,34.2,11.5]],["LE01","Regulatory quality (WGI) [Score 0-100]","H",[53.9,47.89,66.44,52.099,51.5,65]],["LE02","Rule of law (WGI) [Score 0-100]","H",[56.9,50.63,69.84,48.28,39.4,74.11]],["LE03","Applied tariff on roasted coffee from the EU [%]","L",[8.1,8.1,0,0,45,8.1]],["LE04","Intellectual property rights, IPRI [Score 0-10]","H",[4.348,4.99,6.03,4.779,4.326,5.636]],["LE05","Customs clearance efficiency, LPI [Score 1-5]","H",[2.7,2.9,3,2.5,2.5,2.9]]];
 function model(D,W,mode){const C=6,dims=['PO','EC','SO','TE','EN','LE'];
@@ -164,92 +268,100 @@ function model(D,W,mode){const C=6,dims=['PO','EC','SO','TE','EN','LE'];
  const tot=W.reduce((a,b)=>a+b,0);const contrib=dims.map((d,k)=>dim[k].map(x=>x*W[k]/tot));
  const total=[...Array(C)].map((_,c)=>contrib.reduce((a,r)=>a+r[c],0));
  const rank=total.map(x=>1+total.filter(y=>y>x+1e-9).length);return {norm,dim,contrib,total,rank}}
+
 const C=['Argentina','Brazil','Chile','Colombia','Mexico','Uruguay'];
 const DIMS=[['PO','Political'],['EC','Economic'],['SO','Social'],['TE','Technological'],['EN','Environmental'],['LE','Legal']];
-const SW=['--s1','--s2','--s3','--s4','--s5','--s6'];
 const PRE={'Baseline':[15,25,25,10,5,20],'Equal':[17,17,17,17,16,16],'Economy-led':[10,40,20,10,5,15],'Access-led':[20,15,15,5,5,40],'Society-led':[10,20,40,10,5,15]};
-let W=[...PRE.Baseline],mode='mm',sel=42;
+let W=[...PRE.Baseline],mode='mm',sel=42,focus=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const fmt=v=>Math.abs(v)>=1e6?(v/1e6).toLocaleString('en',{maximumFractionDigits:2})+' m':Math.abs(v)>=1000?v.toLocaleString('en',{maximumFractionDigits:0}):v.toLocaleString('en',{maximumFractionDigits:3});
+const fmt=v=>Math.abs(v)>=1e6?(v/1e6).toLocaleString('en-GB',{maximumFractionDigits:2})+' m':Math.abs(v)>=1000?v.toLocaleString('en-GB',{maximumFractionDigits:0}):v.toLocaleString('en-GB',{maximumFractionDigits:3}).replace('-','−');
 const split=n=>{const m=n.match(/^(.*?)\s*\[(.*)\]$/);return m?[m[1],m[2]]:[n,''];};
+const ord=['first','second','third','fourth','fifth','sixth'];
 const tip=$('tip');
-function showTip(e,html){tip.innerHTML=html;tip.hidden=false;const x=Math.min(e.clientX+14,innerWidth-270),y=e.clientY+14;tip.style.left=x+'px';tip.style.top=(y+tip.offsetHeight>innerHeight?e.clientY-tip.offsetHeight-10:y)+'px';}
+function showTip(e,h){tip.innerHTML=h;tip.hidden=false;const x=Math.min(e.clientX+14,innerWidth-280),y=e.clientY+14;tip.style.left=x+'px';tip.style.top=(y+tip.offsetHeight>innerHeight?e.clientY-tip.offsetHeight-10:y)+'px';}
 function hideTip(){tip.hidden=true;}
-function activePreset(){return Object.keys(PRE).find(k=>PRE[k].every((v,i)=>v===W[i]));}
-// controls
+const activePreset=()=>Object.keys(PRE).find(k=>PRE[k].every((v,i)=>v===W[i]));
+const effW=()=>W.reduce((a,b)=>a+b,0)?W:[1,1,1,1,1,1];
 $('presets').innerHTML=Object.keys(PRE).map(k=>`<button class="seg" data-p="${k}">${k}</button>`).join('');
-$('presets').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;W=[...PRE[b.dataset.p]];syncSliders();render();});
-$('sliders').innerHTML=DIMS.map(([k,n],i)=>`<div class="sl"><label for="w-${k}"><span class="sw" style="background:var(${SW[i]})"></span> ${n}</label><input type="range" id="w-${k}" min="0" max="60" step="1" value="${W[i]}" data-i="${i}"><span class="num" id="v-${k}"></span></div>`).join('');
+$('presets').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;W=[...PRE[b.dataset.p]];DIMS.forEach(([k],i)=>{$('w-'+k).value=W[i];});render();});
+$('sliders').innerHTML=DIMS.map(([k,n],i)=>`<div class="sl"><label for="w-${k}">${n}</label><input type="range" id="w-${k}" min="0" max="60" step="1" value="${W[i]}" data-i="${i}"><span class="v" id="v-${k}"></span></div>`).join('');
 $('sliders').addEventListener('input',e=>{if(e.target.dataset.i==null)return;W[+e.target.dataset.i]=+e.target.value;render();});
-function syncSliders(){DIMS.forEach(([k],i)=>{$('w-'+k).value=W[i];});}
 ['mm','t'].forEach(m=>$('m-'+m).addEventListener('click',()=>{mode=m;render();}));
-$('legend').innerHTML=DIMS.map(([k,n],i)=>`<span><span class="sw" style="background:var(${SW[i]})"></span>${n}</span>`).join('');
-
 function render(){
- const tot=W.reduce((a,b)=>a+b,0)||1;
- DIMS.forEach(([k],i)=>{$('v-'+k).textContent=Math.round(100*W[i]/tot)+'%';});
+ const tot=W.reduce((a,b)=>a+b,0)||1;DIMS.forEach(([k],i)=>{$('v-'+k).textContent=Math.round(100*W[i]/tot)+'%';});
  const ap=activePreset();document.querySelectorAll('#presets button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===ap?'true':'false'));
  $('m-mm').setAttribute('aria-pressed',mode==='mm');$('m-t').setAttribute('aria-pressed',mode==='t');
- const Wn=W.reduce((a,b)=>a+b,0)?W:[1,1,1,1,1,1];
- const r=model(D,Wn,mode);
- $('sumnote').textContent=(ap?ap+' weights':'Custom weights')+' · '+(mode==='mm'?'min-max normalisation, 0 = weakest, 100 = best of six on every indicator':'T-scores, 50 = average of the six countries')+' · bar segments show each dimension’s contribution';
- const order=[...C.keys()].sort((a,b)=>r.total[b]-r.total[a]);
- $('verdict').innerHTML=order.map(c=>`<span class="chip"><b>#${r.rank[c]}</b>${C[c]} <span class="num" style="color:var(--muted)">${r.total[c].toFixed(1)}</span></span>`).join('');
- drawBars(r,order);drawTable(r,order);drawRob();drawHeat(r);drawDetail(r);
+ const r=model(D,effW(),mode),order=[...C.keys()].sort((a,b)=>r.total[b]-r.total[a]);
+ if(focus===null)focus=order[0];
+ $('verdict').innerHTML=order.map((c,j)=>`<span class="pill${j===0?' top':''}"><span class="r">#${r.rank[c]}</span>${C[c]}<span class="s">${r.total[c].toFixed(1)}</span></span>`).join('');
+ const gap=r.total[order[0]]-r.total[order[1]];
+ $('t-bars').textContent=`${C[order[0]]} leads ${C[order[1]]} by ${gap.toFixed(1)} points`;
+ $('s-bars').textContent=`Weighted score, ${mode==='mm'?'0–100 (min-max: 0 = weakest, 100 = best of six)':'T-score basis (50 = average of six)'} · ${ap?ap+' weights':'your weights'}`;
+ drawBars(r,order);drawTable(r,order);drawDrivers(r);drawRob();drawHeat(r);drawDetail(r);
 }
 function drawBars(r,order){
- const w=Math.max(560,$('bars').clientWidth||900),L=96,R=56,rowH=38,top=22,h=top+rowH*6+8,max=mode==='mm'?100:70;
- const x=v=>L+(w-L-R)*v/max;
- let s=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Weighted score by country, stacked by PESTEL dimension">`;
- const ticks=mode==='mm'?[0,25,50,75,100]:[0,10,20,30,40,50,60,70];
- ticks.forEach(t=>{s+=`<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${top-6}" y2="${h-8}"/><text x="${x(t)}" y="${top-10}" text-anchor="middle">${t}</text>`;});
- order.forEach((c,j)=>{const y=top+j*rowH+6,bh=rowH-14;let cx=x(0);
-  s+=`<text class="country" x="${L-10}" y="${y+bh/2+4}" text-anchor="end">${C[c]}</text>`;
-  DIMS.forEach(([k,n],i)=>{const v=r.contrib[i][c],bw=Math.max(0,x(v)-x(0));if(bw<=0)return;const last=i===5||DIMS.slice(i+1).every((_,q)=>r.contrib[i+1+q][c]<=0);
-   s+=`<rect class="bar" x="${cx}" y="${y}" width="${Math.max(0,bw-2)}" height="${bh}" rx="${last?4:1}" style="fill:var(${SW[i]})" data-c="${c}" data-i="${i}"/>`;cx+=bw;});
-  s+=`<text class="val" x="${cx+6}" y="${y+bh/2+4}">${r.total[c].toFixed(1)}</text>`;});
- s+='</svg>';$('bars').innerHTML=s;
- $('bars').querySelectorAll('rect.bar').forEach(el=>{el.addEventListener('mousemove',e=>{const c=+el.dataset.c,i=+el.dataset.i;showTip(e,`<b>${C[c]} · ${DIMS[i][1]}</b><br>Dimension score ${r.dim[i][c].toFixed(1)}<br>Contribution ${r.contrib[i][c].toFixed(1)} of ${r.total[c].toFixed(1)}`);});el.addEventListener('mouseleave',hideTip);});
+ const w=Math.max(380,$('bars').clientWidth||560),L=88,R=46,rowH=36,top=20,h=top+rowH*6+6,max=mode==='mm'?100:70,x=v=>L+(w-L-R)*v/max;
+ const ticks=mode==='mm'?[0,25,50,75,100]:[0,20,40,60];
+ let s=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Weighted score by country">`;
+ ticks.forEach(t=>{s+=`<line class="gl" x1="${x(t)}" x2="${x(t)}" y1="${top-4}" y2="${h-4}"/><text x="${x(t)}" y="${top-8}" text-anchor="middle">${t}</text>`;});
+ order.forEach((c,j)=>{const y=top+j*rowH+6,bh=rowH-14,bw=Math.max(0,x(r.total[c])-x(0));
+  s+=`<text class="country" x="${L-10}" y="${y+bh/2+4}" text-anchor="end">${C[c]}</text><rect class="bar" tabindex="0" x="${x(0)}" y="${y}" width="${bw}" height="${bh}" rx="4" style="fill:var(${c===focus?'--mark':'--mark-dim'})" data-c="${c}"/><text class="val" x="${x(0)+bw+6}" y="${y+bh/2+4}">${r.total[c].toFixed(1)}</text>`;});
+ $('bars').innerHTML=s+'</svg>';
+ $('bars').querySelectorAll('rect.bar').forEach(el=>{const c=+el.dataset.c;
+  el.addEventListener('click',()=>{focus=c;render();});el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();focus=c;render();}});
+  el.addEventListener('mousemove',e=>showTip(e,`<b>${C[c]}</b> · rank ${r.rank[c]}<br>`+DIMS.map(([k,n],i)=>`${n}: ${r.dim[i][c].toFixed(1)}`).join('<br>')));el.addEventListener('mouseleave',hideTip);});
+}
+function drawDrivers(r){
+ const c=focus,w=Math.max(340,$('drivers').clientWidth||420),L=104,R=44,rowH=34,top=20,h=top+rowH*6+6,x=v=>L+(w-L-R)*v/100;
+ const best=[...DIMS.keys()].sort((a,b)=>r.contrib[b][c]-r.contrib[a][c])[0];
+ $('t-drv').textContent=`${DIMS[best][1]} adds most to ${C[c]}’s score`;
+ $('s-drv').textContent=`Score per PESTEL dimension, 0–100${mode==='t'?' (T-score basis)':''}; the label gives the dimension’s weight and its points in the total`;
+ const tot=effW().reduce((a,b)=>a+b,0);
+ let s=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Dimension scores for ${C[c]}">`;
+ [0,50,100].forEach(t=>{s+=`<line class="gl" x1="${x(t)}" x2="${x(t)}" y1="${top-4}" y2="${h-4}"/><text x="${x(t)}" y="${top-8}" text-anchor="middle">${t}</text>`;});
+ DIMS.forEach(([k,n],i)=>{const y=top+i*rowH+6,bh=rowH-14,v=r.dim[i][c],bw=Math.max(0,x(Math.min(v,100))-x(0));
+  s+=`<text class="country" x="${L-10}" y="${y+bh/2+4}" text-anchor="end">${n}</text><rect x="${x(0)}" y="${y}" width="${bw}" height="${bh}" rx="4" style="fill:var(${i===best?'--mark':'--mark-dim'})"/><text class="val" x="${x(0)+bw+6}" y="${y+bh/2+4}">${v.toFixed(0)}</text>`;});
+ $('drivers').innerHTML=s+'</svg>';
+ $('c-drv').textContent=`${C[c]}: total ${r.total[c].toFixed(1)}, rank ${r.rank[c]} of 6. Points in the total: `+DIMS.map(([k,n],i)=>`${n} ${r.contrib[i][c].toFixed(1)} (${Math.round(100*effW()[i]/tot)}%)`).join(', ')+'.';
 }
 function drawTable(r,order){
- $('bartable').innerHTML=`<thead><tr><th>Rank</th><th>Country</th>${DIMS.map(d=>`<th class="num">${d[1]}</th>`).join('')}<th class="num">Total</th></tr></thead><tbody>`+
- order.map(c=>`<tr><td class="num">${r.rank[c]}</td><td>${C[c]}</td>${DIMS.map((_,i)=>`<td class="num">${r.dim[i][c].toFixed(1)}</td>`).join('')}<td class="num"><b>${r.total[c].toFixed(1)}</b></td></tr>`).join('')+'</tbody>';
+ $('bartable').innerHTML=`<thead><tr><th class="num">Rank</th><th>Country</th>${DIMS.map(d=>`<th class="num">${d[1]}</th>`).join('')}<th class="num">Total</th></tr></thead><tbody>`+order.map(c=>`<tr><td class="num">${r.rank[c]}</td><td>${C[c]}</td>${DIMS.map((_,i)=>`<td class="num">${r.dim[i][c].toFixed(1)}</td>`).join('')}<td class="num"><b>${r.total[c].toFixed(1)}</b></td></tr>`).join('')+'</tbody>';
 }
-const rkStyle=k=>{const bg=['--q9','--q7','--q5','--q3','--q1','--q1'][k-1],fg=k<=3?'var(--bg)':'var(--ink)';return `background:var(${bg});color:${fg}`;};
+const ramp=k=>['--ramp-5','--ramp-4','--ramp-3','--ramp-2','--ramp-1','--ramp-1'][k-1];
 function drawRob(){
- const sets=Object.entries(PRE);const ap=activePreset();const cols=sets.map(([k,w])=>[k,model(D,w,mode).rank]);
- if(!ap)cols.push(['Your weights',model(D,W.reduce((a,b)=>a+b,0)?W:[1,1,1,1,1,1],mode).rank]);
- const order=[...C.keys()].sort((a,b)=>cols[0][1][a]-cols[0][1][b]);
+ const ap=activePreset(),cols=Object.entries(PRE).map(([k,w])=>[k,model(D,w,mode).rank]);if(!ap)cols.push(['Your weights',model(D,effW(),mode).rank]);
+ const ord0=[...C.keys()].sort((a,b)=>cols[0][1][a]-cols[0][1][b]);
+ const lead=ord0[0],firsts=cols.filter(x=>x[1][lead]===1).length;
+ const fixed=C.map((_,c)=>new Set(cols.map(x=>x[1][c])).size===1);const stable=C.filter((_,c)=>fixed[c]);
+ $('h-rob').textContent=`${C[lead]} ranks first under ${firsts} of ${cols.length} weight sets`+(stable.length?`; ${stable.join(' and ')} never move${stable.length===1?'s':''}`:'');
  $('rob').innerHTML=`<thead><tr><th>Country</th>${cols.map(([k])=>`<th class="num">${esc(k)}</th>`).join('')}<th class="num">Rank range</th></tr></thead><tbody>`+
- order.map(c=>{const rs=cols.map(x=>x[1][c]),mn=Math.min(...rs),mx=Math.max(...rs);return `<tr><td><b>${C[c]}</b></td>${rs.map(k=>`<td class="num"><span class="rk" style="${rkStyle(k)}">${k}</span></td>`).join('')}<td class="num mono">${mn===mx?mn:mn+'–'+mx}</td></tr>`;}).join('')+'</tbody>';
+ ord0.map(c=>{const rs=cols.map(x=>x[1][c]),mn=Math.min(...rs),mx=Math.max(...rs);return `<tr><td><b>${C[c]}</b></td>${rs.map(k=>`<td class="num"><span class="rk" style="background:var(${ramp(k)});color:${k<=3?'var(--btn-ink)':'var(--ink)'}">${k}</span></td>`).join('')}<td class="num">${mn===mx?mn:mn+'–'+mx}</td></tr>`;}).join('')+'</tbody>';
 }
-const heatBg=v=>{const s=mode==='mm'?v:Math.max(0,Math.min(100,(v-30)*2.5));return s>=80?'--q9':s>=60?'--q7':s>=40?'--q5':s>=20?'--q3':'--q1';};
+const heat=v=>{const s=mode==='mm'?v:Math.max(0,Math.min(100,(v-30)*2.5));return s>=80?'--ramp-5':s>=60?'--ramp-4':s>=40?'--ramp-3':s>=20?'--ramp-2':'--ramp-1';};
 function drawHeat(r){
- let h=`<thead><tr><th></th><th></th>${C.map(c=>`<th>${c.slice(0,3).toUpperCase()}</th>`).join('')}</tr></thead><tbody>`;let prev='';
+ let h=`<thead><tr><th></th><th></th>${C.map(c=>`<th>${c.slice(0,3).toUpperCase()}</th>`).join('')}</tr></thead><tbody>`,prev='';
  D.forEach(([id,n],i)=>{const g=id.slice(0,2);if(prev&&g!==prev)h+='<tr class="gap"><td colspan="8"></td></tr>';prev=g;
-  h+=`<tr class="${i===sel?'sel':''}" data-i="${i}"><td class="id">${id}</td><td class="nm" title="${esc(split(n)[0])}">${esc(split(n)[0])}</td>`+
-  r.norm[i][mode].map((v,c)=>{const bg=heatBg(v),dark=['--q9','--q7','--q5'].includes(bg);return `<td class="c" tabindex="0" data-i="${i}" data-c="${c}" style="background:var(${bg});color:${dark?'var(--bg)':'var(--ink)'}">${Math.round(v)}</td>`;}).join('')+'</tr>';});
+  h+=`<tr class="${i===sel?'sel':''}" data-i="${i}"><td class="id">${id}</td><td class="nm" title="${esc(split(n)[0])}">${esc(split(n)[0])}</td>`+r.norm[i][mode].map((v,c)=>{const bg=heat(v),dk=['--ramp-5','--ramp-4','--ramp-3'].includes(bg);return `<td class="c" tabindex="0" data-i="${i}" data-c="${c}" style="background:var(${bg});color:${dk?'var(--btn-ink)':'var(--ink)'}">${Math.round(v)}</td>`;}).join('')+'</tr>';});
  $('hm').innerHTML=h+'</tbody>';
 }
-$('hm').addEventListener('click',e=>{const tr=e.target.closest('tr[data-i]');if(!tr)return;sel=+tr.dataset.i;render();});
+$('hm').addEventListener('click',e=>{const tr=e.target.closest('tr[data-i]');if(tr){sel=+tr.dataset.i;render();}});
 $('hm').addEventListener('keydown',e=>{if(e.key==='Enter'){const td=e.target.closest('td[data-i]');if(td){sel=+td.dataset.i;render();}}});
-$('hm').addEventListener('mousemove',e=>{const td=e.target.closest('td.c');if(!td)return hideTip();const i=+td.dataset.i,c=+td.dataset.c,[nm,u]=split(D[i][1]);
- showTip(e,`<b>${C[c]} · ${D[i][0]}</b><br>${esc(nm)}<br>Value ${fmt(D[i][3][c])} ${esc(u)}<br>${D[i][2]==='L'?'Lower':'Higher'} is better · score ${td.textContent}`);});
+$('hm').addEventListener('mousemove',e=>{const td=e.target.closest('td.c');if(!td)return hideTip();const i=+td.dataset.i,c=+td.dataset.c,[nm,u]=split(D[i][1]);showTip(e,`<b>${C[c]} · ${D[i][0]}</b><br>${esc(nm)}<br>Value ${fmt(D[i][3][c])} ${esc(u)}<br>${D[i][2]==='L'?'Lower':'Higher'} is better · score ${td.textContent}`);});
 $('hm').addEventListener('mouseleave',hideTip);
 function drawDetail(r){
- const [id,n,dir,v]=D[sel],[nm,u]=split(n),mn=Math.min(...v),mx=Math.max(...v),w=420,L=12,R=12,y=46;
- const x=val=>mx===mn?w/2:L+(w-L-R)*(val-mn)/(mx-mn);
- let s=`<svg viewBox="0 0 ${w} 96" width="100%" role="img" aria-label="Raw values of ${esc(nm)}"><line class="grid" x1="${L}" x2="${w-R}" y1="${y}" y2="${y}"/>`;
- const grp={};C.forEach((c,i)=>{(grp[v[i]]=grp[v[i]]||[]).push(c.slice(0,3));});
- Object.keys(grp).map(Number).sort((a,b)=>a-b).forEach((val,j)=>{const px=x(val),anc=px<60?'start':px>w-60?'end':'middle';s+=`<circle cx="${px}" cy="${y}" r="6" style="fill:var(--accent);stroke:var(--panel);stroke-width:2"/><text x="${px}" y="${j%2?y+26:y-14}" text-anchor="${anc}">${grp[val].join(' · ')}</text>`;});
+ const [id,n,dir,v]=D[sel],[nm,u]=split(n),mn=Math.min(...v),mx=Math.max(...v),w=420,L=14,R=14,y=46,x=val=>mx===mn?w/2:L+(w-L-R)*(val-mn)/(mx-mn);
+ const best=dir==='L'?mn:mx;const grp={};C.forEach((c,i)=>{(grp[v[i]]=grp[v[i]]||[]).push(c.slice(0,3));});
+ let s=`<svg viewBox="0 0 ${w} 96" width="100%" role="img" aria-label="Raw values of ${esc(nm)}"><line class="gl" x1="${L}" x2="${w-R}" y1="${y}" y2="${y}"/>`;
+ Object.keys(grp).map(Number).sort((a,b)=>a-b).forEach((val,j)=>{const px=x(val),anc=px<60?'start':px>w-60?'end':'middle';s+=`<circle cx="${px}" cy="${y}" r="6" style="fill:var(${val===best?'--mark':'--mark-dim'});stroke:var(--card);stroke-width:2"/><text x="${px}" y="${j%2?y+26:y-14}" text-anchor="${anc}">${grp[val].join(' · ')}</text>`;});
  s+=`<text x="${L}" y="${y+44}">${esc(fmt(mn))}</text><text x="${w-R}" y="${y+44}" text-anchor="end">${esc(fmt(mx))}</text></svg>`;
- $('detail').innerHTML=`<div class="eyebrow">${id} · ${DIMS.find(d=>id.startsWith(d[0]))[1]}</div><strong>${esc(nm)}</strong><span class="note">${esc(u)} · ${dir==='L'?'lower is better':'higher is better'}</span>${s}
+ $('detail').innerHTML=`<div class="kicker">${id} · ${DIMS.find(d=>id.startsWith(d[0]))[1]}</div><div class="ctitle">${esc(nm)}</div><div class="csub">${esc(u)} · ${dir==='L'?'lower is better':'higher is better'} · best value in blue</div>${s}
  <div class="tw"><table><thead><tr><th>Country</th><th class="num">Value</th><th class="num">Min-max</th><th class="num">T-score</th></tr></thead><tbody>${C.map((c,i)=>`<tr><td>${c}</td><td class="num">${fmt(v[i])}</td><td class="num">${r.norm[sel].mm[i].toFixed(0)}</td><td class="num">${r.norm[sel].t[i].toFixed(0)}</td></tr>`).join('')}</tbody></table></div>
- <p class="note">Min-max puts the weakest of the six at 0 and the best at 100, however small the gap. T-scores keep the real distances: 50 is the average, 60 one standard deviation better.</p>`;
+ <p class="note">Min-max puts the weakest of the six at 0 and the best at 100, however small the gap. T-scores keep the real distances: 50 is the average, 60 is one standard deviation better.</p>`;
 }
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(render,150);});
 render();
+
 </script>
 </body>
 </html>
